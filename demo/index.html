@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>White Flow - Synthetic Preview</title>
+  <link rel="stylesheet" href="../src/workbench.css">
+  <link rel="stylesheet" href="../src/keyword-flow.css">
+  <style class="vscode-tokens-styles">
+    .mtk1 { color: #27272a; }
+    .mtk2 { color: #7c3aed; }
+    .mtk3 { color: #047857; }
+    .mtk4 { color: #1d4ed8; }
+    .mtk5 { color: #71717a; }
+    .mtk6 { color: #b45309; }
+  </style>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #27272a; background: #fff; font: 13px system-ui, sans-serif; }
+    .preview-label { height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 22px; border-bottom: 1px solid #e4e4e7; }
+    .preview-label strong { font-size: 14px; font-weight: 600; }
+    .preview-label small { color: #71717a; font-size: 11px; }
+    .monaco-workbench { min-height: calc(100vh - 44px); display: grid; grid-template-rows: 38px 1fr 26px; }
+    .titlebar { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid #e4e4e7; }
+    .menu { display: flex; gap: 18px; font-size: 12px; color: #52525b; }
+    .workspace-name { font-size: 12px; color: #71717a; }
+    .body { display: grid; grid-template-columns: 210px minmax(0, 1fr); }
+    .sidebar { padding: 20px 12px; border-right: 1px solid #e4e4e7; }
+    .title-label h2 { margin: 0 0 20px 10px; }
+    .folder { margin: 0 0 10px 10px; font-size: 12px; font-weight: 600; }
+    .monaco-list-row { min-height: 30px; display: flex; align-items: center; gap: 10px; position: relative; padding: 0 12px; color: #52525b; }
+    .monaco-list-row.selected { background: #f0f0f3; color: #18181b; }
+    .file-kind { width: 18px; color: #2563eb; font: 10px ui-monospace, monospace; }
+    .editor { min-width: 0; display: flex; flex-direction: column; }
+    .tabs-container { height: 40px; display: flex; padding-left: 8px; border-bottom: 1px solid #e4e4e7; background: #f8f8f9; }
+    .tab { display: flex; align-items: center; gap: 12px; padding: 0 14px; }
+    .tab-label { font-size: 12px; }
+    .breadcrumb { color: #71717a; font-size: 11px; padding: 12px 22px 9px; }
+    .monaco-editor { flex: 1; min-width: 0; overflow-x: auto; padding: 6px 0 38px; outline: none; }
+    .view-lines { counter-reset: line; min-width: 590px; font: 16px/29px Consolas, "Courier New", monospace; tab-size: 2; }
+    .view-line { position: relative; min-height: 29px; padding-left: 74px; white-space: pre; counter-increment: line; }
+    .view-line::before { content: counter(line); position: absolute; left: 14px; width: 32px; text-align: right; color: #a1a1aa; font-size: 13px; }
+    .view-line.current { background: #f7f7f9; }
+    .statusbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #e4e4e7; padding: 0 16px; color: #71717a; font-size: 11px; }
+    @media (max-width: 700px) {
+      .body { grid-template-columns: minmax(0, 1fr); }
+      .sidebar, .menu { display: none; }
+      .titlebar { justify-content: center; }
+      .preview-label { padding: 0 14px; }
+      .view-line { padding-left: 58px; }
+      .view-line::before { left: 4px; }
+    }
+  </style>
+  <script src="../src/keyword-flow.js" defer></script>
+</head>
+<body>
+  <header class="preview-label"><strong>White Flow</strong><small>Synthetic preview</small></header>
+  <main class="monaco-workbench vs">
+    <div class="part titlebar"><div class="menu"><span>File</span><span>Edit</span><span>View</span><span>Run</span><span>Terminal</span></div><span class="workspace-name">sample-project</span></div>
+    <div class="body">
+      <aside class="part sidebar">
+        <div class="title-label"><h2>EXPLORER</h2></div>
+        <div class="folder">sample-project</div>
+        <div class="monaco-list-row selected"><span class="file-kind">TS</span><span class="monaco-icon-label">App.tsx</span></div>
+        <div class="monaco-list-row"><span class="file-kind">CSS</span><span class="monaco-icon-label">styles.css</span></div>
+        <div class="monaco-list-row"><span class="file-kind">MD</span><span class="monaco-icon-label">README.md</span></div>
+      </aside>
+      <section class="part editor">
+        <div class="tabs-container"><div class="tab active"><span class="file-kind">TS</span><span class="tab-label">App.tsx</span></div></div>
+        <div class="breadcrumb">sample-project / src / App.tsx</div>
+        <div class="monaco-editor" tabindex="0" aria-label="Fictional code preview">
+          <div class="view-overlays"></div>
+          <div class="view-lines">
+<div class="view-line"><span class="mtk2">import</span><span class="mtk1"> { </span><span class="mtk4">useState</span><span class="mtk1"> } </span><span class="mtk2">from</span><span class="mtk3"> "react"</span><span class="mtk1">;</span></div>
+<div class="view-line"><span class="mtk2">import</span><span class="mtk1"> { Button } </span><span class="mtk2">from</span><span class="mtk3"> "./ui/button"</span><span class="mtk1">;</span></div>
+<div class="view-line"> </div>
+<div class="view-line"><span class="mtk5">// A small sample, not a personal workspace.</span></div>
+<div class="view-line"><span class="mtk2">export default function</span><span class="mtk4"> App</span><span class="mtk1">() {</span></div>
+<div class="view-line current"><span class="mtk2">  const</span><span class="mtk1"> [count, </span><span class="mtk4">setCount</span><span class="mtk1">] = </span><span class="mtk4">useState</span><span class="mtk1">(</span><span class="mtk6">0</span><span class="mtk1">);</span></div>
+<div class="view-line"> </div>
+<div class="view-line"><span class="mtk2">  return</span><span class="mtk1"> (</span></div>
+<div class="view-line"><span class="mtk4">    &lt;main</span><span class="mtk1"> className=</span><span class="mtk3">"workspace"</span><span class="mtk4">&gt;</span></div>
+<div class="view-line"><span class="mtk4">      &lt;h1&gt;</span><span class="mtk1">My workspace</span><span class="mtk4">&lt;/h1&gt;</span></div>
+<div class="view-line"><span class="mtk4">      &lt;Button</span><span class="mtk1"> onClick={() =&gt; </span><span class="mtk4">setCount</span><span class="mtk1">(count + </span><span class="mtk6">1</span><span class="mtk1">)}</span><span class="mtk4">&gt;</span></div>
+<div class="view-line"><span class="mtk1">        New task: {count}</span></div>
+<div class="view-line"><span class="mtk4">      &lt;/Button&gt;</span></div>
+<div class="view-line"><span class="mtk4">    &lt;/main&gt;</span></div>
+<div class="view-line"><span class="mtk1">  );</span></div>
+<div class="view-line"><span class="mtk1">}</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer class="part statusbar"><span>White Flow Light</span><span>UTF-8 &nbsp; TypeScript React</span></footer>
+  </main>
+</body>
+</html>

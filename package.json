@@ -1,0 +1,29 @@
+{
+  "name": "white-flow-vscode",
+  "displayName": "White Flow",
+  "description": "A white VS Code theme with optional, reversible workbench styling and low-frequency keyword accents.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "white-flow-local",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "vscode": "^1.98.0"
+  },
+  "categories": ["Themes"],
+  "keywords": ["light theme", "white", "accessibility", "keyword accents"],
+  "contributes": {
+    "themes": [
+      {
+        "label": "White Flow Light",
+        "uiTheme": "vs",
+        "path": "./themes/white-flow-light.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/keyword-flow.js",
+    "audit:release": "node tools/audit-release.cjs"
+  }
+}

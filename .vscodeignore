@@ -1,0 +1,14 @@
+**
+!package.json
+!README.md
+!LICENSE
+!CHANGELOG.md
+!THIRD_PARTY_NOTICES.md
+!docs/
+!docs/**
+!demo/
+!demo/preview.png
+!themes/
+!themes/**
+!licenses/
+!licenses/**
