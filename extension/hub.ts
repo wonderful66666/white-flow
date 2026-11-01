@@ -15,7 +15,7 @@ const SETTINGS_BUTTON: vscode.QuickInputButton = {
   tooltip: 'Open White Flow settings'
 };
 
-function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean): FeatureItem[] {
+function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean, patchPresent: boolean): FeatureItem[] {
   const typingStyle = resolveStyle(config.get('typingMotion.style'), patchKeyframes);
   return [{
     label: '$(keyboard) Typing Motion',
@@ -23,16 +23,22 @@ function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean
     detail: 'Only the newest typed character moves, and only vertically, so the cursor and clicks stay accurate.',
     picked: config.get<boolean>('typingMotion.enabled', false),
     setting: 'typingMotion.enabled'
+  }, {
+    label: '$(symbol-keyword) Keyword Flow',
+    description: patchPresent ? 'workbench patch detected' : 'patch missing: no effect',
+    detail: 'Requires the optional patch and White Flow theme. Aurora and Spectrum palettes are in settings.',
+    picked: config.get<boolean>('keywordFlow.enabled', false),
+    setting: 'keywordFlow.enabled'
   }];
 }
 
-export async function openFeatureHub(patchKeyframes: boolean): Promise<void> {
+export async function openFeatureHub(patchKeyframes: boolean, patchPresent = patchKeyframes): Promise<void> {
   const config = vscode.workspace.getConfiguration('whiteFlow');
-  const items = features(config, patchKeyframes);
+  const items = features(config, patchKeyframes, patchPresent);
   const picker = vscode.window.createQuickPick<FeatureItem>();
   picker.title = 'White Flow Features';
-  picker.placeholder = patchKeyframes
-    ? 'Everything is off by default. Workbench patch detected: full effects available.'
+  picker.placeholder = patchPresent
+    ? 'Everything is off by default. Workbench patch detected; feature support depends on its version.'
     : 'Everything is off by default. Workbench patch not detected: supported effects only.';
   picker.canSelectMany = true;
   picker.matchOnDetail = true;

@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(OUT, 'typingRules.js'))) {
   throw new Error('Compiled extension not found. Run `npm run compile` before `node --test`.');
 }
 const rules = require('../out/typingRules.js');
-const { patchProvidesKeyframes, WORKBENCH_ENTRIES } = require('../out/patchStatus.js');
+const { patchMarkerPresent, patchProvidesKeyframes, WORKBENCH_ENTRIES } = require('../out/patchStatus.js');
 const { HTML_LOCATIONS, BEGIN } = require('../tools/manage.cjs');
 
 const insert = (rangeOffset, text) => ({ rangeOffset, rangeLength: 0, text });
@@ -89,6 +89,7 @@ test('patch detection mirrors the installer and needs marker plus keyframes', as
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'white-flow-detect-'));
   try {
     assert.equal(await patchProvidesKeyframes(root), false);
+    assert.equal(await patchMarkerPresent(root), false);
     const entry = path.join(root, HTML_LOCATIONS[0]);
     const assets = path.join(path.dirname(entry), 'white-flow-assets');
     fs.mkdirSync(assets, { recursive: true });
@@ -96,9 +97,11 @@ test('patch detection mirrors the installer and needs marker plus keyframes', as
     fs.writeFileSync(path.join(assets, 'workbench.css'), fs.readFileSync(path.join(ROOT, 'src/workbench.css')));
     assert.equal(await patchProvidesKeyframes(root), false, 'no marker: patch restored');
     fs.writeFileSync(entry, `<html><head>${BEGIN}\n</head></html>`);
+    assert.equal(await patchMarkerPresent(root), true);
     assert.equal(await patchProvidesKeyframes(root), true);
     fs.writeFileSync(path.join(assets, 'workbench.css'), '/* an older patch without typing keyframes */');
     assert.equal(await patchProvidesKeyframes(root), false, 'older patch falls back to fade');
+    assert.equal(await patchMarkerPresent(root), true, 'marker detection is independent of typing keyframes');
   } finally {
     removeTempDirectory(root, 'white-flow-detect-');
   }

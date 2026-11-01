@@ -6,21 +6,25 @@ A white VS Code theme with an optional feature hub, opt-in editor effects, and o
 
 **Download:** [White Flow v0.2.0](https://github.com/wonderful66666/white-flow/releases/tag/v0.2.0), then choose `white-flow-vscode-0.2.0.vsix` under **Assets**. The automatic source archives are not extension installation packages.
 
+**Unreleased 0.3.0 source:** adds the Keyword Flow switch and Aurora/Spectrum palettes. The published v0.2.0 VSIX does not contain that switch. It requires both the updated extension and updated renderer patch; older patch versions remain always-on until restored and reapplied.
+
 ![Synthetic White Flow preview](demo/preview.png)
 
-The preview uses fictional files and sample code, not a screenshot of a personal workspace. Open `demo/index.html` locally to see the animation. It is a visual demonstration, not a working editor or proof of desktop compatibility.
+The preview uses fictional files and sample code, not a screenshot of a personal workspace. Open `demo/index.html` locally and use its Keyword Flow checkbox to try the animation. It is a visual demonstration with a synthetic signal producer, not a working editor or proof of desktop compatibility.
 
 ## Three Layers
 
 | Layer | What it does | Installation |
 | --- | --- | --- |
-| Color theme | White editor, quiet neutral surfaces, purple keywords, green strings, blue functions | Standard VS Code theme |
-| Feature hub | Optional features, all off by default, such as typing motion | Same extension; enable features from the hub |
-| Optional patch | Rounded controls, subtle borders, short popup effects, low-frequency keyword color flow, and richer versions of hub features | Explicit local application-file modification |
+| Color theme | White editor, neutral identifiers and structure, purple keywords, blue functions, teal types, green strings, amber constants, and rose metadata | Standard VS Code theme |
+| Feature hub | Opt-in typing motion and Keyword Flow controls, all off by default | Same extension; enable features from the hub |
+| Optional patch | Workbench polish, signal-controlled keyword color flow, and richer typing motion | Explicit local application-file modification; update with the extension |
 
 While **White Flow Light** is selected, a sparkle button in the editor title bar opens the feature hub. The **White Flow: Open Feature Hub** command works with any theme. With every feature off, the extension only registers that command and a settings listener after startup.
 
 The patch does not install React, Motion, Magic UI, or React Bits into VS Code. It is a small CSS/DOM adaptation inspired by those visual styles, not an official integration.
+
+The 0.3.0 source palette reserves `#7C3AED` for keywords and `self`/`this`; Java type references, Rust lifetimes, macros, and bracket pairs do not share that flow color. Identifiers remain ink, punctuation and namespaces use a quieter gray, and comments use a separate gray. TextMate and semantic-token foregrounds are tested against white, the current-line highlight, and the blue selection; comments have a lower selection threshold. Bracket guides, inlay hints, diagnostics, diff highlights, Git markers, and sticky-scroll highlights have explicit colors without changing other workbench surfaces or fonts.
 
 ## Install The Released VSIX
 
@@ -65,11 +69,17 @@ When enabled, a short insertion appears with a short effect, 140 ms by default. 
 
 The extension learns about an edit slightly after the editor draws it, so the character can be visible for a frame or two before the effect starts. `workbench.reduceMotion: on` disables the effect. The API-only fade cannot detect OS motion preferences when that setting is `auto`; set it explicitly to `on` to disable motion. With the patch, OS reduced-motion and forced-color preferences also remove the rise keyframes.
 
-### Keyword flow (patch)
+### Keyword flow (extension switch plus updated patch)
 
-Keyword color flow uses one shared CSS rule, updated at six ticks per second. It pauses during keyboard/wheel activity and when the window is hidden or unfocused. Reduced-motion and forced-color preferences disable the animated text treatment; selections fall back to static token colors.
+In the 0.3.0 source, choose **Keyword Flow** in the feature hub and confirm with Enter. It is off by default. Set `whiteFlow.keywordFlow.palette` to `aurora` (purple, blue, teal, rose) or `spectrum` (red, green, blue, purple) through settings. The signal exists only with **White Flow Light** selected and Workbench Reduce Motion not set to `on`. The extension never changes the chosen theme or that preference automatically. A detected patch marker alone does not prove that an older installed runtime understands the new switch.
 
-Only tokens whose theme colors match the configured accent palette receive the effect. This is color-class matching, not semantic keyword recognition. Some function names may also animate. There is no claim of zero overhead or measured desktop CPU usage. See [Performance](docs/PERFORMANCE.md).
+The new patch starts off and polls only stylesheet metadata about every 1500 ms while focused and visible; allow that delay plus a short refresh debounce after changing the switch. Turning it off removes the gradient stylesheet and stops color ticks. Disabling or uninstalling the extension also removes its signal; reload if VS Code requests it. The new patch then shows ordinary token colors.
+
+Only the White Flow purple keyword color (`rgb(124, 58, 237)`) matches. Blue function-name classes and the previous broad blue/magenta matches are excluded. This remains color-class matching, not a parser or semantic keyword service; reusing the same purple in custom token overrides can broaden the match.
+
+Both palettes use OKLCH interpolation when supported and a validated ordinary-gradient fallback otherwise. Unsupported gradients never leave transparent text behind. One shared CSS rule updates at six ticks per second, pausing during typing, scrolling, background use, or reduced motion. Selection and forced-color styles restore readable solid colors. See [Performance](docs/PERFORMANCE.md).
+
+An old installed patch keeps its previous always-on behavior even if this extension is updated. Restore it using its own private state, reapply the new source patch with a fresh state directory, and reload; the installer deliberately refuses changed payloads in an active installation. See [upgrading both layers](docs/INSTALLATION.md#upgrade-keyword-flow-to-030).
 
 ## Project Layout
 

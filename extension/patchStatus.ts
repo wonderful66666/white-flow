@@ -26,6 +26,16 @@ async function readText(file: string): Promise<string | null> {
   }
 }
 
+/** Marker detection does not imply that the installed runtime supports the newest protocol. */
+export async function patchMarkerPresent(appRoot: string): Promise<boolean> {
+  if (!appRoot) return false;
+  for (const entry of WORKBENCH_ENTRIES) {
+    const html = await readText(path.join(appRoot, entry));
+    if (html?.includes(PATCH_MARKER)) return true;
+  }
+  return false;
+}
+
 /** True when a marked workbench entry sits next to a patch stylesheet that defines the rise keyframes. */
 export async function patchProvidesKeyframes(appRoot: string): Promise<boolean> {
   if (!appRoot) return false;

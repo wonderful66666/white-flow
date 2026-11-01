@@ -8,9 +8,13 @@ When typing motion is enabled, the extension receives document change events fro
 
 To choose the richer effect, the extension reads White Flow's own patch marker and patch stylesheet inside the running VS Code application directory. It never writes there. The feature hub writes only `whiteFlow.*` settings, through the VS Code configuration API, when you accept a choice.
 
+Keyword Flow sends only an enabled palette name through an unapplied decoration type's stylesheet declaration. It creates no editor-range decoration, text-change listener, timer, document read, or file read for this signal. The values are strictly limited to `aurora` and `spectrum`. The type is absent while the feature is off, the theme differs from the manifest's White Flow label, or Workbench Reduce Motion is `on`.
+
 ## Patch Runtime
 
 The appearance runtime contains no network client, telemetry endpoint, analytics, storage API, or code upload feature. It reads theme token CSS and editor activity events only to coordinate appearance. It does not read code text, settings, credentials, project files, or interpreter configuration.
+
+The updated keyword renderer also reads one allowlisted CSS custom property from style elements in the document head and optional adopted stylesheets. It skips the token stylesheet and its own runtime stylesheet when looking for that signal. The signal is appearance metadata, not code text or arbitrary settings. A slow check runs only while the window is focused and visible, including while the effect is off so it can detect activation. Diagnostics contain the enabled state, palette, token class names, and counters, never document text. No file, storage, network, or alternate event bridge is used.
 
 The color theme itself is static data. Selecting it changes the chosen color theme through VS Code itself; it does not change font settings or development tools.
 

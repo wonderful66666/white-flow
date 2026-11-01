@@ -1,5 +1,7 @@
 # Installation And Restoration
 
+The published asset described below is v0.2.0. The Keyword Flow switch is in the unreleased 0.3.0 source and requires a matching updated extension build and renderer patch; it is not added to an old VSIX by updating documentation.
+
 ## Install The Release Asset
 
 Use desktop VS Code 1.98 or newer. Download `white-flow-vscode-0.2.0.vsix` from the [v0.2.0 Release](https://github.com/wonderful66666/white-flow/releases/tag/v0.2.0). Choose the actual `.vsix` under **Assets**, not **Source code (zip)** or **Source code (tar.gz)**.
@@ -42,7 +44,7 @@ Uninstalling the extension does not remove an independently installed workbench 
 | Feature hub | Yes | Yes |
 | Typing fade | Yes, when enabled | Yes, with style `fade` |
 | Blur-and-rise typing | No; falls back to fade | Requires the patch marker and typing keyframes |
-| Keyword color flow | No | Requires the patch runtime and matching token colors |
+| Keyword color flow (0.3.0 source) | No | Requires the updated runtime, enabled hub switch, White Flow theme, and purple keyword class |
 | Rounded workbench controls and popup polish | No | Requires the workbench CSS |
 
 **Full visual effects require both layers. Installing the VSIX does not install, update, or elevate the optional patch.** Source code for the public patch is in `src/` and `tools/manage.cjs`, available in a source checkout or the source archive. Its portable installer is still fixture-tested only. A working legacy local setup is not proof that this installer will work on your desktop. Read [Compatibility](COMPATIBILITY.md) and try a disposable installation first.
@@ -67,6 +69,16 @@ code --new-window --extensionDevelopmentPath .
 In that host, run **Preferences: Color Theme** and select **White Flow Light**. This does not install the optional patch or change fonts. Use the sparkle button in the editor title bar, or **White Flow: Open Feature Hub**, to enable optional features. To stop using the theme, select your previous theme.
 
 To build a local VSIX, review the extension manifest. The current `white-flow-local` value is a local identifier, not a registered publisher; a Marketplace account is not required to install the provided VSIX. Publishing your own Marketplace listing requires your own registered publisher. Use Microsoft's official [extension packaging instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Packaging tools are not bundled or downloaded by this project. Run `npm run compile` before packaging. The VSIX allowlist includes the theme, compiled extension code in `out/`, documentation, preview image, and notices, not TypeScript sources, the application patch, or local state. The interactive demo and commands below require the source checkout, not just the installed theme package.
+
+## Upgrade Keyword Flow To 0.3.0
+
+1. Obtain an updated extension build from the 0.3.0 source. The existing published v0.2.0 VSIX does not expose Keyword Flow settings.
+2. Save work and quit the affected editor. Restore the old patch with the installer and private state that own it. The public installer must not be used to overwrite another injector or a private legacy adapter.
+3. Reapply the updated public source patch with a new private state directory, using the plan and apply commands below. Changed payload hashes intentionally require restore/reapply rather than silently replacing an active installation.
+4. Reopen the editor and select **White Flow Light** if you explicitly want its theme. Open **White Flow: Open Feature Hub**, check **Keyword Flow**, and press Enter. The checkbox is off by default; it has no visual effect without a compatible patch and the correct theme.
+5. Set **White Flow > Keyword Flow: Palette** to **aurora** or **spectrum**. Keep Workbench Reduce Motion not set to `on` only if you want motion. Allow about 1500 ms plus the refresh debounce for a change to appear.
+
+An old installed script remains always-on until restored and reapplied, even when the updated extension checkbox is off. The updated script starts off, including when the extension is disabled, uninstalled, on another theme, or unable to send its signal. A detected marker means only that a patch is present, not that an old script supports the new protocol. Keep all old backups private and do not force an installer past its safety checks.
 
 ## Experimental Workbench Patch
 

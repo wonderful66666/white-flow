@@ -40,7 +40,7 @@ node tools/audit-release.cjs
 ### Off by default, quiet when off
 
 - Each feature has a `whiteFlow.<feature>.enabled` setting that defaults to `false` and appears in the feature hub.
-- With a feature off, it must register no editor listeners, decorations, timers, or file reads.
+- With a feature off, extension code must register no editor listeners, decorations, timers, or file reads. The separately loaded renderer may retain its slow, focused signal check, never color ticks, while off.
 - The hub button appears only while the White Flow theme is selected. The command stays available in the Command Palette.
 - Activation uses `onStartupFinished`, never `*`.
 
@@ -57,6 +57,16 @@ The editor places the cursor, selections, and click targets by measuring where c
 ### Two tiers: supported API first, patch as enhancement
 
 Each feature must work, in a simpler form, with the supported extension API alone. The patch may add keyframes or styles that the extension API cannot provide. Detect the patch by its marker and asset content; fall back silently when it is missing or older. Example: typing motion fades in with the API and rises with the patch.
+
+Keyword Flow is an explicit patch-only exception: its hub control and status work without the patch, but no color effect is applied. Missing or incompatible renderer support must leave normal text unchanged.
+
+### The Only Extension-To-Patch Channel
+
+`workbenchSignal.ts` is pure declaration logic with no VS Code import. It accepts only boolean `enabled: true` and the exact `aurora` or `spectrum` palette. It returns `none; --white-flow-keyword-flow: <palette>` or null, never arbitrary CSS or braces.
+
+`KeywordFlowSignal` owns at most one unapplied decoration type. The type exists only while enabled, the selected theme matches the label from `package.json`, and Workbench Reduce Motion is not `on`. Refresh and disposal remove the old type first. This path is synchronous, so no pending asynchronous creation can revive a disabled feature. Never assign this signal decoration to a range or read document contents to transmit state.
+
+VS Code currently registers a decoration type's CSS rule globally before any range uses it and copies its `textDecoration` value into that rule. The renderer reads only the allowlisted custom property from eligible head stylesheets or adopted stylesheets. It checks a still-attached cached sheet first and uses a focused, visible 1500 ms poll because CSSOM `insertRule` does not trigger a MutationObserver. This is an undocumented appearance bridge, not IPC or an official configuration API. Do not add another bridge through custom DOM events, files, sockets, storage, or settings reads. If it stops working, the effect must remain off.
 
 ### Accessibility and performance
 

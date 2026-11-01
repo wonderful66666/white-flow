@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 - Unreleased
+
+- Replace syntax colors with neutral identifiers and structure, teal types, green strings, amber constants, rose metadata, and a purple reserved for keywords.
+- Add specific Java type, Rust lifetime/option/macro, annotation, Markdown, diff, and semantic-token roles without font-family or size overrides.
+- Define bracket, inlay-hint, diagnostic, gutter, diff, Git, and sticky-scroll highlight colors while preserving other workbench surfaces.
+- Test WCAG 2.x foreground contrast and keyword-purple exclusivity; update the synthetic HTML palette without regenerating its PNG.
+- Add a default-off Keyword Flow hub switch and Aurora/Spectrum palette settings.
+- Send only allowlisted palette metadata through one unapplied decoration type, gated by the White Flow theme and reduced-motion preference.
+- Start the renderer off, discover CSSOM signals with a focused visible 1500 ms check, and remove token overrides when the signal disappears.
+- Restrict matching to the theme's purple keyword class; blue function names and prior magenta/blue matches stay unchanged.
+- Use OKLCH interpolation when supported, validate the ordinary-gradient fallback, and retain solid text if gradients are unsupported.
+- Cover sender lifetime, CSSOM insertions/removal, palette changes, background timers, accessibility, and unsupported stylesheets with synthetic tests.
+- Document the undocumented bridge, matching-version requirement, and mandatory restore/reapply for older always-on patches.
+
 ## 0.2.0 - 2026-11-01
 
 - Add a TypeScript extension with a feature hub, opened from a title-bar button shown with the White Flow theme. All features are off by default; no runtime dependencies.

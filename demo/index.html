@@ -9,10 +9,14 @@
   <style class="vscode-tokens-styles">
     .mtk1 { color: #27272a; }
     .mtk2 { color: #7c3aed; }
-    .mtk3 { color: #047857; }
+    .mtk3 { color: #03782e; }
     .mtk4 { color: #1d4ed8; }
-    .mtk5 { color: #71717a; }
-    .mtk6 { color: #b45309; }
+    .mtk5 { color: #6b7280; }
+    .mtk6 { color: #9a5702; }
+    .mtk7 { color: #52525b; }
+    .mtk8 { color: #037471; }
+    .mtk9 { color: #c22859; }
+    .mtk10 { color: #b91c1c; }
   </style>
   <style>
     * { box-sizing: border-box; }
@@ -20,6 +24,10 @@
     .preview-label { height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 22px; border-bottom: 1px solid #e4e4e7; }
     .preview-label strong { font-size: 14px; font-weight: 600; }
     .preview-label small { color: #71717a; font-size: 11px; }
+    .preview-controls { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+    .preview-controls label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .preview-controls input { width: 16px; height: 16px; margin: 0; accent-color: #2563eb; }
+    .preview-controls select { width: 104px; height: 28px; border: 1px solid #d4d4d8; border-radius: 4px; background: #fff; color: #27272a; font: inherit; padding: 0 6px; }
     .monaco-workbench { min-height: calc(100vh - 44px); display: grid; grid-template-rows: 38px 1fr 26px; }
     .titlebar { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid #e4e4e7; }
     .menu { display: flex; gap: 18px; font-size: 12px; color: #52525b; }
@@ -46,7 +54,9 @@
       .body { grid-template-columns: minmax(0, 1fr); }
       .sidebar, .menu { display: none; }
       .titlebar { justify-content: center; }
-      .preview-label { padding: 0 14px; }
+      .preview-label { height: 80px; padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+      .preview-controls { order: 3; width: 100%; margin-left: 0; }
+      .monaco-workbench { min-height: calc(100vh - 80px); }
       .view-line { padding-left: 58px; }
       .view-line::before { left: 4px; }
     }
@@ -54,7 +64,17 @@
   <script src="../src/keyword-flow.js" defer></script>
 </head>
 <body>
-  <header class="preview-label"><strong>White Flow</strong><small>Synthetic preview</small></header>
+  <header class="preview-label">
+    <strong>White Flow</strong>
+    <div class="preview-controls">
+      <label><input id="keyword-flow" type="checkbox">Keyword Flow</label>
+      <select id="keyword-palette" aria-label="Keyword Flow palette" disabled>
+        <option value="aurora">Aurora</option>
+        <option value="spectrum">Spectrum</option>
+      </select>
+    </div>
+    <small>Synthetic preview</small>
+  </header>
   <main class="monaco-workbench vs">
     <div class="part titlebar"><div class="menu"><span>File</span><span>Edit</span><span>View</span><span>Run</span><span>Terminal</span></div><span class="workspace-name">sample-project</span></div>
     <div class="body">
@@ -71,27 +91,43 @@
         <div class="monaco-editor" tabindex="0" aria-label="Fictional code preview">
           <div class="view-overlays"></div>
           <div class="view-lines">
-<div class="view-line"><span class="mtk2">import</span><span class="mtk1"> { </span><span class="mtk4">useState</span><span class="mtk1"> } </span><span class="mtk2">from</span><span class="mtk3"> "react"</span><span class="mtk1">;</span></div>
-<div class="view-line"><span class="mtk2">import</span><span class="mtk1"> { Button } </span><span class="mtk2">from</span><span class="mtk3"> "./ui/button"</span><span class="mtk1">;</span></div>
+<div class="view-line"><span class="mtk2">import</span><span class="mtk7"> { </span><span class="mtk4">useState</span><span class="mtk7"> } </span><span class="mtk2">from</span><span class="mtk3"> "react"</span><span class="mtk7">;</span></div>
+<div class="view-line"><span class="mtk2">import</span><span class="mtk7"> { </span><span class="mtk1">Button</span><span class="mtk7"> } </span><span class="mtk2">from</span><span class="mtk3"> "./ui/button"</span><span class="mtk7">;</span></div>
 <div class="view-line"> </div>
 <div class="view-line"><span class="mtk5">// A small sample, not a personal workspace.</span></div>
-<div class="view-line"><span class="mtk2">export default function</span><span class="mtk4"> App</span><span class="mtk1">() {</span></div>
-<div class="view-line current"><span class="mtk2">  const</span><span class="mtk1"> [count, </span><span class="mtk4">setCount</span><span class="mtk1">] = </span><span class="mtk4">useState</span><span class="mtk1">(</span><span class="mtk6">0</span><span class="mtk1">);</span></div>
+<div class="view-line"><span class="mtk2">export default function</span><span class="mtk4"> App</span><span class="mtk7">() {</span></div>
+<div class="view-line current"><span class="mtk2">  const</span><span class="mtk7"> [</span><span class="mtk1">count</span><span class="mtk7">, </span><span class="mtk4">setCount</span><span class="mtk7">] = </span><span class="mtk4">useState</span><span class="mtk7">(</span><span class="mtk6">0</span><span class="mtk7">);</span></div>
 <div class="view-line"> </div>
-<div class="view-line"><span class="mtk2">  return</span><span class="mtk1"> (</span></div>
-<div class="view-line"><span class="mtk4">    &lt;main</span><span class="mtk1"> className=</span><span class="mtk3">"workspace"</span><span class="mtk4">&gt;</span></div>
-<div class="view-line"><span class="mtk4">      &lt;h1&gt;</span><span class="mtk1">My workspace</span><span class="mtk4">&lt;/h1&gt;</span></div>
-<div class="view-line"><span class="mtk4">      &lt;Button</span><span class="mtk1"> onClick={() =&gt; </span><span class="mtk4">setCount</span><span class="mtk1">(count + </span><span class="mtk6">1</span><span class="mtk1">)}</span><span class="mtk4">&gt;</span></div>
-<div class="view-line"><span class="mtk1">        New task: {count}</span></div>
-<div class="view-line"><span class="mtk4">      &lt;/Button&gt;</span></div>
-<div class="view-line"><span class="mtk4">    &lt;/main&gt;</span></div>
-<div class="view-line"><span class="mtk1">  );</span></div>
-<div class="view-line"><span class="mtk1">}</span></div>
+<div class="view-line"><span class="mtk2">  return</span><span class="mtk7"> (</span></div>
+<div class="view-line"><span class="mtk7">    &lt;</span><span class="mtk8">main</span><span class="mtk6"> className</span><span class="mtk7">=</span><span class="mtk3">"workspace"</span><span class="mtk7">&gt;</span></div>
+<div class="view-line"><span class="mtk7">      &lt;</span><span class="mtk8">h1</span><span class="mtk7">&gt;</span><span class="mtk1">My workspace</span><span class="mtk7">&lt;/</span><span class="mtk8">h1</span><span class="mtk7">&gt;</span></div>
+<div class="view-line"><span class="mtk7">      &lt;</span><span class="mtk8">Button</span><span class="mtk6"> onClick</span><span class="mtk7">={() =&gt; </span><span class="mtk4">setCount</span><span class="mtk7">(</span><span class="mtk1">count</span><span class="mtk7"> + </span><span class="mtk6">1</span><span class="mtk7">)}&gt;</span></div>
+<div class="view-line"><span class="mtk1">        New task: </span><span class="mtk7">{</span><span class="mtk1">count</span><span class="mtk7">}</span></div>
+<div class="view-line"><span class="mtk7">      &lt;/</span><span class="mtk8">Button</span><span class="mtk7">&gt;</span></div>
+<div class="view-line"><span class="mtk7">    &lt;/</span><span class="mtk8">main</span><span class="mtk7">&gt;</span></div>
+<div class="view-line"><span class="mtk7">  );</span></div>
+<div class="view-line"><span class="mtk7">}</span></div>
           </div>
         </div>
       </section>
     </div>
     <footer class="part statusbar"><span>White Flow Light</span><span>UTF-8 &nbsp; TypeScript React</span></footer>
   </main>
+  <script>
+    // Synthetic CSSOM producer for this preview only; it does not replace the extension API.
+    const flowSwitch = document.getElementById('keyword-flow');
+    const flowPalette = document.getElementById('keyword-palette');
+    const signalStyle = document.createElement('style');
+    document.head.append(signalStyle);
+    function updateSignal() {
+      flowPalette.disabled = !flowSwitch.checked;
+      while (signalStyle.sheet.cssRules.length) signalStyle.sheet.deleteRule(0);
+      if (flowSwitch.checked && ['aurora', 'spectrum'].includes(flowPalette.value)) {
+        signalStyle.sheet.insertRule('.demo-keyword-signal { text-decoration: none; --white-flow-keyword-flow: ' + flowPalette.value + '; }');
+      }
+    }
+    flowSwitch.addEventListener('change', updateSignal);
+    flowPalette.addEventListener('change', updateSignal);
+  </script>
 </body>
 </html>

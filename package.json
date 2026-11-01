@@ -1,8 +1,8 @@
 {
   "name": "white-flow-vscode",
   "displayName": "White Flow",
-  "description": "A white VS Code theme with an optional feature hub, opt-in typing motion, and reversible workbench styling.",
-  "version": "0.2.0",
+  "description": "A white VS Code theme with opt-in typing motion, switchable keyword flow, and optional workbench styling.",
+  "version": "0.3.0",
   "private": true,
   "publisher": "white-flow-local",
   "license": "MIT",
@@ -56,6 +56,21 @@
     "configuration": {
       "title": "White Flow",
       "properties": {
+        "whiteFlow.keywordFlow.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Enable keyword color flow. Requires the updated optional workbench patch and the White Flow Light theme."
+        },
+        "whiteFlow.keywordFlow.palette": {
+          "type": "string",
+          "enum": ["aurora", "spectrum"],
+          "enumDescriptions": [
+            "Purple, blue, teal, and rose with vivid OKLCH interpolation when supported.",
+            "Red, green, blue, and purple with vivid OKLCH interpolation when supported."
+          ],
+          "default": "aurora",
+          "markdownDescription": "Palette for keyword flow. Requires the optional workbench patch."
+        },
         "whiteFlow.typingMotion.enabled": {
           "type": "boolean",
           "default": false,

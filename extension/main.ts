@@ -6,8 +6,9 @@
  */
 import * as vscode from 'vscode';
 import { openFeatureHub } from './hub';
-import { patchProvidesKeyframes } from './patchStatus';
+import { patchMarkerPresent, patchProvidesKeyframes } from './patchStatus';
 import { TypingMotion } from './typingMotion';
+import { KeywordFlowSignal } from './keywordFlow';
 
 export function activate(context: vscode.ExtensionContext): void {
   // Patch detection is lazy and cached; the hub re-checks because the patch may change between sessions.
@@ -18,18 +19,24 @@ export function activate(context: vscode.ExtensionContext): void {
   };
 
   const typing = new TypingMotion(() => detectPatch());
+  const themeLabel: string = context.extension.packageJSON.contributes.themes[0].label;
+  const keywordFlow = new KeywordFlowSignal(themeLabel);
   context.subscriptions.push(
     typing,
+    keywordFlow,
     vscode.commands.registerCommand('whiteFlow.openFeatures', async () => {
-      await openFeatureHub(await detectPatch(true));
+      await openFeatureHub(await detectPatch(true), await patchMarkerPresent(vscode.env.appRoot));
     }),
     vscode.workspace.onDidChangeConfiguration(event => {
-      if (event.affectsConfiguration('whiteFlow') || event.affectsConfiguration('workbench.reduceMotion')) {
+      if (event.affectsConfiguration('whiteFlow.typingMotion') || event.affectsConfiguration('workbench.reduceMotion')) {
         void typing.refresh();
       }
+      if (event.affectsConfiguration('whiteFlow.keywordFlow') || event.affectsConfiguration('workbench.colorTheme') ||
+          event.affectsConfiguration('workbench.reduceMotion')) keywordFlow.refresh();
     })
   );
   if (TypingMotion.isEnabled()) void typing.refresh();
+  keywordFlow.refresh();
 }
 
 export function deactivate(): void {

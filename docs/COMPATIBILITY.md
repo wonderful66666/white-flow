@@ -6,6 +6,7 @@
 | VSIX installation and feature-hub activation | Checked in ordinary desktop VS Code 1.98.2 on Windows; other versions and platforms remain unvalidated |
 | Typing motion (fade) | Supported extension API; requires VS Code 1.98 or newer. No cross-platform visual guarantee. |
 | Typing motion (rise) | Observed on Windows VS Code 1.98.2 with a separate legacy-compatible local adapter; the public portable installer is not covered by that observation |
+| Keyword Flow switch (0.3.0 source) | Mocked extension and synthetic renderer tests; the declaration bridge uses undocumented behavior and has no desktop validation for this version |
 | Appearance CSS and keyword runtime | Derived from assets previously exercised on Windows with VS Code 1.98.2 |
 | Portable external-resource installer | Synthetic fixture tests only; no end-to-end desktop validation for this distribution |
 | Other versions and operating systems | Not validated; experimental |
@@ -15,6 +16,14 @@ The earlier local setup used a different injection method. Its working appearanc
 The GitHub Release VSIX contains the theme and extension, not that private adapter or any installed application files. Blur-rise, keyword flow, and complete workbench styling still require an independently reviewed, compatible application patch. Do not copy another person's settings, application HTML, private scripts, or backups to reproduce the appearance.
 
 Microsoft documents that workbench DOM/CSS replacement is outside the supported extension surface: [Extension capabilities and restrictions](https://code.visualstudio.com/api/extension-capabilities/overview#restrictions).
+
+## Keyword Flow Signal
+
+The extension registers one unapplied decoration type whose `textDecoration` value carries an allowlisted `--white-flow-keyword-flow` property. Current VS Code behavior inserts this CSS rule before any range is decorated and removes it when the type is disposed. The renderer checks this metadata through CSSOM. These details are undocumented and may change. If the declaration is escaped, the rule is no longer globally exposed, or stylesheet access becomes unavailable, the new patch stays off and ordinary text remains readable.
+
+Only the manifest's White Flow theme label is accepted by the sender, and only `rgb(124, 58, 237)` keyword-color classes are accepted by the renderer. Blue function-name and prior broad magenta/blue matches are removed. Custom token rules that reuse the keyword purple can still broaden matching; this is not semantic token classification.
+
+The 0.3.0 switch cannot control an older already-installed always-on script. Restore and reapply the patch after updating the extension, then reload. Conversely, a new renderer used without the updated enabled extension has no signal and shows no flow. Disabling or uninstalling the extension removes the signal; complete any reload requested by VS Code. The published v0.2.0 VSIX does not contain this switch.
 
 ## Typing Motion
 
