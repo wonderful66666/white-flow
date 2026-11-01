@@ -10,11 +10,15 @@ To choose the richer effect, the extension reads White Flow's own patch marker a
 
 Keyword Flow sends only an enabled palette name through an unapplied decoration type's stylesheet declaration. It creates no editor-range decoration, text-change listener, timer, document read, or file read for this signal. The values are strictly limited to `aurora` and `spectrum`. The type is absent while the feature is off, the theme differs from the manifest's White Flow label, or Workbench Reduce Motion is `on`.
 
+Focus Mode asks VS Code's configured symbol provider for symbol ranges/kinds and caches provider metadata per URI/version in memory. Method Beams asks its call-hierarchy provider for locations; it sends only up to five numeric same-file line pairs, a counter, and a fixed motion flag to the renderer. Neither feature parses source to infer calls. Language services have their own behavior and privacy policies, including in remote workspaces; White Flow adds no network or upload channel.
+
+Edit Trail keeps only document keys, rebased line numbers, and timestamps in memory, capped at 2,000 per document, with no persistence. Risk Radar lexes bounded Rust text in memory and retains only offset/range findings and fixed hover messages, never the text. Read/write highlight colors add no listener or processing.
+
 ## Patch Runtime
 
-The appearance runtime contains no network client, telemetry endpoint, analytics, storage API, or code upload feature. It reads theme token CSS and editor activity events only to coordinate appearance. It does not read code text, settings, credentials, project files, or interpreter configuration.
+The runtime contains no network client, telemetry endpoint, analytics, storage API, or upload feature. It reads token CSS, activity events, primary-cursor `style.left`, numeric gutter labels, and element bounds/visibility. It does not read code text, settings, credentials, project files, or interpreter configuration. It never modifies editor nodes: mist uses owned head styles and beams uses an owned body-level SVG.
 
-The updated keyword renderer also reads one allowlisted CSS custom property from style elements in the document head and optional adopted stylesheets. It skips the token stylesheet and its own runtime stylesheet when looking for that signal. The signal is appearance metadata, not code text or arbitrary settings. A slow check runs only while the window is focused and visible, including while the effect is off so it can detect activation. Diagnostics contain the enabled state, palette, token class names, and counters, never document text. No file, storage, network, or alternate event bridge is used.
+The renderer reads only known allowlisted properties from head styles and optional adopted stylesheets, excluding token sheets and its own styles. Signals are appearance metadata, not source text or arbitrary settings. A slow foreground check also runs while effects are off to detect activation. Diagnostics contain states, palette, token classes, and counters, never document text. No alternate file, storage, network, or custom-event bridge is used.
 
 The color theme itself is static data. Selecting it changes the chosen color theme through VS Code itself; it does not change font settings or development tools.
 

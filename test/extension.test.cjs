@@ -92,15 +92,16 @@ function fixture() {
     const module = { exports: {} };
     const source = fs.readFileSync(filename, 'utf8');
     const wrapper = new vm.Script('(function(exports, require, module) {' + source + '\n})', { filename });
-    wrapper.runInNewContext({ setTimeout: setTimer, clearTimeout: clearTimer })(module.exports, id => {
+    wrapper.runInNewContext({ setTimeout: setTimer, clearTimeout: clearTimer, setInterval: setTimer, clearInterval: clearTimer })(module.exports, id => {
       if (id === 'vscode') return vscode;
       if (id === './typingRules') return require('../out/typingRules.js');
       if (id === './workbenchSignal') return require('../out/workbenchSignal.js');
-      if (['./hub', './typingMotion', './keywordFlow'].includes(id)) return load(id.slice(2));
       if (id === './patchStatus') return {
         async patchProvidesKeyframes() { patchReads++; return false; },
+        async patchProvidesBeams() { patchReads++; return false; },
         async patchMarkerPresent() { patchReads++; return false; }
       };
+      if (id.startsWith('./')) return load(id.slice(2));
       throw new Error('Unexpected fixture import');
     }, module);
     return module.exports;

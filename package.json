@@ -42,6 +42,16 @@
         "title": "Open Feature Hub",
         "category": "White Flow",
         "icon": "$(sparkle)"
+      },
+      {
+        "command": "whiteFlow.editTrail.previous",
+        "title": "Previous Edit",
+        "category": "White Flow"
+      },
+      {
+        "command": "whiteFlow.editTrail.next",
+        "title": "Next Edit",
+        "category": "White Flow"
       }
     ],
     "menus": {
@@ -56,6 +66,46 @@
     "configuration": {
       "title": "White Flow",
       "properties": {
+        "whiteFlow.focusMode.enabled": {
+          "type": "boolean", "default": false,
+          "markdownDescription": "Dim code outside the current function using document symbols. No workbench patch required."
+        },
+        "whiteFlow.focusMode.opacity": {
+          "type": "number", "default": 0.4, "minimum": 0.25, "maximum": 0.7,
+          "markdownDescription": "Opacity of code outside the focused function."
+        },
+        "whiteFlow.lineMist.enabled": {
+          "type": "boolean", "default": false,
+          "markdownDescription": "Add a pale aurora band to the current line. Requires the updated optional workbench patch and White Flow theme."
+        },
+        "whiteFlow.lineMist.drift": {
+          "type": "boolean", "default": true,
+          "markdownDescription": "Drift the line mist while motion is allowed."
+        },
+        "whiteFlow.lineMist.cursorGlow": {
+          "type": "boolean", "default": true,
+          "markdownDescription": "Add a faint glow around the primary cursor."
+        },
+        "whiteFlow.methodBeams.enabled": {
+          "type": "boolean", "default": false,
+          "markdownDescription": "Connect same-file calls and definitions. Uses a gutter fallback without the updated optional workbench patch."
+        },
+        "whiteFlow.editTrail.enabled": {
+          "type": "boolean", "default": false,
+          "markdownDescription": "Mark recently edited lines in the gutter and overview ruler, in memory only."
+        },
+        "whiteFlow.editTrail.minutes": {
+          "type": "number", "default": 10, "minimum": 2, "maximum": 60,
+          "markdownDescription": "Minutes until an edit mark expires."
+        },
+        "whiteFlow.riskRadar.enabled": {
+          "type": "boolean", "default": false,
+          "markdownDescription": "Underline potentially panicking operations and unsafe code in Rust files."
+        },
+        "whiteFlow.riskRadar.ignoreTests": {
+          "type": "boolean", "default": true,
+          "markdownDescription": "Skip Rust cfg(test) modules and test functions."
+        },
         "whiteFlow.keywordFlow.enabled": {
           "type": "boolean",
           "default": false,

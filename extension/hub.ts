@@ -29,6 +29,26 @@ function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean
     detail: 'Requires the optional patch and White Flow theme. Aurora and Spectrum palettes are in settings.',
     picked: config.get<boolean>('keywordFlow.enabled', false),
     setting: 'keywordFlow.enabled'
+  }, {
+    label: '$(eye) Focus Mode', description: 'supported API',
+    detail: 'Keep the innermost function clear and dim surrounding code using language-provider symbols.',
+    picked: config.get<boolean>('focusMode.enabled', false), setting: 'focusMode.enabled'
+  }, {
+    label: '$(color-mode) Line Mist', description: patchPresent ? 'workbench patch detected' : 'patch missing: no effect',
+    detail: 'Pale aurora current-line band. Requires the updated patch and White Flow theme.',
+    picked: config.get<boolean>('lineMist.enabled', false), setting: 'lineMist.enabled'
+  }, {
+    label: '$(references) Method Beams', description: patchPresent ? 'workbench patch detected' : 'patch missing: gutter fallback',
+    detail: 'Connect same-file call hierarchy locations; renderer support depends on the installed patch version.',
+    picked: config.get<boolean>('methodBeams.enabled', false), setting: 'methodBeams.enabled'
+  }, {
+    label: '$(history) Edit Trail', description: 'supported API',
+    detail: 'Short-lived gutter marks and navigation through recent edits, stored only in memory.',
+    picked: config.get<boolean>('editTrail.enabled', false), setting: 'editTrail.enabled'
+  }, {
+    label: '$(warning) Risk Radar (Rust)', description: 'supported API',
+    detail: 'Lexical hints for panic-prone Rust operations; not a proof of safety.',
+    picked: config.get<boolean>('riskRadar.enabled', false), setting: 'riskRadar.enabled'
   }];
 }
 

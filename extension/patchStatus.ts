@@ -47,3 +47,15 @@ export async function patchProvidesKeyframes(appRoot: string): Promise<boolean> 
   }
   return false;
 }
+
+/** A marker in the renderer payload distinguishes beams from older keyword-only patches. */
+export async function patchProvidesBeams(appRoot: string): Promise<boolean> {
+  if (!appRoot) return false;
+  for (const entry of WORKBENCH_ENTRIES) {
+    const html = await readText(path.join(appRoot, entry));
+    if (!html?.includes(PATCH_MARKER)) continue;
+    const script = await readText(path.join(appRoot, path.dirname(entry), 'white-flow-assets', 'keyword-flow.js'));
+    if (script?.includes('WHITE-FLOW:METHOD-BEAMS')) return true;
+  }
+  return false;
+}

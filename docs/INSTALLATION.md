@@ -1,6 +1,6 @@
 # Installation And Restoration
 
-The published asset described below is v0.2.0. The Keyword Flow switch is in the unreleased 0.3.0 source and requires a matching updated extension build and renderer patch; it is not added to an old VSIX by updating documentation.
+The published asset below is v0.2.0. The Keyword Flow switch and six new code features are in the unreleased 0.3.0 source; documentation updates do not add them to an old VSIX. Full keyword/mist/beam effects need matching updated extension and renderer layers.
 
 ## Install The Release Asset
 
@@ -45,6 +45,10 @@ Uninstalling the extension does not remove an independently installed workbench 
 | Typing fade | Yes, when enabled | Yes, with style `fade` |
 | Blur-and-rise typing | No; falls back to fade | Requires the patch marker and typing keyframes |
 | Keyword color flow (0.3.0 source) | No | Requires the updated runtime, enabled hub switch, White Flow theme, and purple keyword class |
+| Read/write occurrence palette (0.3.0 source) | Updated selected theme, with language support | Same |
+| Focus / Edit Trail / Risk Radar (0.3.0 source) | Yes, when enabled in the updated build | Same |
+| Line Mist (0.3.0 source) | Native current-line highlight only | Updated renderer and White Flow theme |
+| Method Beams (0.3.0 source) | Gutter fallback with call-hierarchy support | Updated renderer marker and White Flow theme |
 | Rounded workbench controls and popup polish | No | Requires the workbench CSS |
 
 **Full visual effects require both layers. Installing the VSIX does not install, update, or elevate the optional patch.** Source code for the public patch is in `src/` and `tools/manage.cjs`, available in a source checkout or the source archive. Its portable installer is still fixture-tested only. A working legacy local setup is not proof that this installer will work on your desktop. Read [Compatibility](COMPATIBILITY.md) and try a disposable installation first.
@@ -79,6 +83,8 @@ To build a local VSIX, review the extension manifest. The current `white-flow-lo
 5. Set **White Flow > Keyword Flow: Palette** to **aurora** or **spectrum**. Keep Workbench Reduce Motion not set to `on` only if you want motion. Allow about 1500 ms plus the refresh debounce for a change to appear.
 
 An old installed script remains always-on until restored and reapplied, even when the updated extension checkbox is off. The updated script starts off, including when the extension is disabled, uninstalled, on another theme, or unable to send its signal. A detected marker means only that a patch is present, not that an old script supports the new protocol. Keep all old backups private and do not force an installer past its safety checks.
+
+The same restore/reapply requirement applies to Line Mist and Method Beams. The installer retains its three payload filenames and refuses changed active hashes. A generic patch marker does not imply beam support: fallback is decided from its renderer section marker. Read/write colors and API-only features need the updated theme/extension, not an application patch.
 
 ## Experimental Workbench Patch
 

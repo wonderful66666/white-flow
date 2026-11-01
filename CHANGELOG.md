@@ -2,6 +2,14 @@
 
 ## 0.3.0 - Unreleased
 
+- Add translucent read/write occurrence colors with alpha-composited contrast checks.
+- Add default-off Focus Mode using cached document symbols and stale-result protection.
+- Generalize the declaration-only bridge for independent palette, mist, and bounded beam metadata, with one unapplied type per feature.
+- Add Aurora Mist with a shared 6 Hz drift rule, coalesced cursor glow, and accessibility fallbacks.
+- Add same-file call-hierarchy Method Beams with a supported gutter fallback and optional body-level brushed-silver SVG.
+- Add in-memory Edit Trail with rebased line marks, bounded foreground-only aging, and previous/next edit commands.
+- Add lexical Rust Risk Radar with comment/literal/test filtering, bounded files, offset-only findings, and English hints.
+- Test disabled resources, stale providers, signals, renderer geometry, timers, scanner boundaries, and composited backgrounds.
 - Replace syntax colors with neutral identifiers and structure, teal types, green strings, amber constants, rose metadata, and a purple reserved for keywords.
 - Add specific Java type, Rust lifetime/option/macro, annotation, Markdown, diff, and semantic-token roles without font-family or size overrides.
 - Define bracket, inlay-hint, diagnostic, gutter, diff, Git, and sticky-scroll highlight colors while preserving other workbench surfaces.

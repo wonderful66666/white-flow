@@ -7,6 +7,8 @@
 | Typing motion (fade) | Supported extension API; requires VS Code 1.98 or newer. No cross-platform visual guarantee. |
 | Typing motion (rise) | Observed on Windows VS Code 1.98.2 with a separate legacy-compatible local adapter; the public portable installer is not covered by that observation |
 | Keyword Flow switch (0.3.0 source) | Mocked extension and synthetic renderer tests; the declaration bridge uses undocumented behavior and has no desktop validation for this version |
+| Focus Mode, Edit Trail, Risk Radar (0.3.0 source) | Supported APIs with mocked tests, not validated in a real desktop editor |
+| Line Mist and Method Beams (0.3.0 source) | Synthetic renderer tests only; matching updated layers required for full effects |
 | Appearance CSS and keyword runtime | Derived from assets previously exercised on Windows with VS Code 1.98.2 |
 | Portable external-resource installer | Synthetic fixture tests only; no end-to-end desktop validation for this distribution |
 | Other versions and operating systems | Not validated; experimental |
@@ -32,6 +34,14 @@ The rise style places extra CSS declarations in a decoration's `textDecoration` 
 Both `auto` and `rise` fall back to the supported fade when White Flow's marker or keyframes are absent. Edit-origin detection is heuristic: document change events do not reliably distinguish typing from short paste or programmatic insertion. Explicit `workbench.reduceMotion: on` disables both styles. The API-only fade cannot inspect OS motion preferences while that setting is `auto`.
 
 Monaco redraws a line after edits, scrolling, and some background updates. A redraw during the short animation restarts it for that character. The extension runs in a separate process from the editor, so a typed character can be drawn a frame or two before its effect starts.
+
+## Code Features
+
+Read/write classification comes from the configured language provider. Focus depends on function/method/constructor symbols, supporting hierarchical DocumentSymbol and flat SymbolInformation results. Missing or differently classified symbols leave code undimmed. Method Beams likewise requires provider call-hierarchy support; unsupported commands show nothing. Only same-file results qualify. Without the new renderer section marker, or on another theme, it uses gutter decorations. Gutter icons can compete with breakpoints and other extensions.
+
+Mist relies on `.view-overlays .current-line`, `.margin-view-overlays .current-line-margin`, and `.cursors-layer .cursor`. Rows can be recreated on typing, so no entrance animations are used. Beams relies on numeric `.margin-view-overlays .line-numbers`, the `.margin` lane, and editor/widget focus classes. Folding, wrapping, relative/hidden numbers, diff/notebook editors, and future layout changes can suppress drawing. Off-screen or unsafe estimates use line chips, not invented geometry. Missing structures fail without changing editor nodes.
+
+Risk Radar is a lexical aid, not a Rust parser, borrow checker, macro expander, or safety proof. It skips direct `#[cfg(test)]` modules and `#[test]` functions, not arbitrary cfg expressions/custom test attributes. Shadowed macros/methods can be flagged; indirect panics and generated code can be missed. It is independent of rust-analyzer. Edit Trail is session-only and rebases marks itself because repainting cannot recover editor-adjusted decoration positions.
 
 ## Deliberate Boundaries
 

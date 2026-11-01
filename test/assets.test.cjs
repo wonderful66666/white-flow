@@ -10,10 +10,22 @@ function readTheme() {
   return JSON.parse(fs.readFileSync(path.join(ROOT, 'themes/white-flow-light.json'), 'utf8'));
 }
 
-function relativeLuminance(hex) {
+function channels(hex) {
   assert.match(hex, /^#[0-9a-f]{6}$/i, 'contrast checks require opaque sRGB colors');
-  const linear = hex.slice(1).match(/../g).map(channel => {
-    const value = Number.parseInt(channel, 16) / 255;
+  return hex.slice(1).match(/../g).map(channel => Number.parseInt(channel, 16));
+}
+
+function compositeColor(color, background) {
+  assert.match(color, /^#[0-9a-f]{8}$/i);
+  const alpha = Number.parseInt(color.slice(7), 16) / 255;
+  const foreground = channels(color.slice(0, 7));
+  const base = typeof background === 'string' ? channels(background) : background;
+  return base.map((value, i) => foreground[i] * alpha + value * (1 - alpha));
+}
+
+function relativeLuminance(color) {
+  const linear = (typeof color === 'string' ? channels(color) : color).map(channel => {
+    const value = channel / 255;
     return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
   });
   return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722;
@@ -75,6 +87,30 @@ test('keyword purple is reserved for the keyword rule and keyword semantic token
   assert.deepEqual(semantic.map(([name]) => name).sort(), ['keyword', 'selfKeyword']);
   for (const [key, color] of Object.entries(theme.colors)) assert.notEqual(color.toUpperCase(), purple, key);
   assert.equal(JSON.stringify(theme).match(/#7c3aed/gi).length, 3);
+});
+
+test('read and write highlights retain alpha and meet composited syntax contrast', () => {
+  assert.deepEqual(compositeColor('#00000000', '#FFFFFF'), [255, 255, 255]);
+  assert.deepEqual(compositeColor('#000000FF', '#FFFFFF'), [0, 0, 0]);
+  const theme = readTheme();
+  const expected = {
+    'editor.wordHighlightBackground': '#D4D4D859', 'editor.wordHighlightBorder': '#D4D4D8',
+    'editor.wordHighlightStrongBackground': '#FCD34D4D', 'editor.wordHighlightStrongBorder': '#F59E0B99',
+    'editor.wordHighlightTextBackground': '#E4E4E759',
+    'editorOverviewRuler.wordHighlightForeground': '#A1A1AA99',
+    'editorOverviewRuler.wordHighlightStrongForeground': '#F59E0BCC'
+  };
+  for (const [key, value] of Object.entries(expected)) assert.equal(theme.colors[key], value, key);
+  for (const key of ['editor.wordHighlightBackground', 'editor.wordHighlightStrongBackground']) {
+    assert.ok(Number.parseInt(theme.colors[key].slice(7), 16) < 255);
+    for (const background of ['editor.background', 'editor.lineHighlightBackground']) {
+      const composited = compositeColor(theme.colors[key], theme.colors[background]);
+      for (const { name, color } of syntaxForegrounds(theme)) {
+        const minimum = color.toUpperCase() === '#6B7280' ? 4 : 4.5;
+        assert.ok(contrastRatio(color, composited) >= minimum, `${name} on ${key} over ${background}`);
+      }
+    }
+  }
 });
 
 test('TextMate roles include specific type, constant, and metadata overrides', () => {
@@ -183,7 +219,8 @@ test('runtime parses and contains no network or code-text reads', () => {
   const source = fs.readFileSync(path.join(ROOT, 'src/keyword-flow.js'), 'utf8');
   assert.doesNotThrow(() => new Script(source));
   assert.doesNotMatch(source, /\b(?:fetch|WebSocket|XMLHttpRequest|eval)\s*\(/);
-  assert.doesNotMatch(source, /\brequestAnimationFrame\s*\(/);
+  assert.equal((source.match(/\brequestAnimationFrame\s*\(/g) || []).length, 1, 'one event-batched beam layout callback only');
+  assert.doesNotMatch(source, /requestAnimationFrame\(\s*(?:tick|scheduleBeams)\b/);
   assert.match(source, /1000 \/ 6/);
   assert.match(source, /prefers-reduced-motion/);
   assert.match(source, /forced-colors/);
@@ -191,6 +228,19 @@ test('runtime parses and contains no network or code-text reads', () => {
   assert.match(source, /--white-flow-keyword-flow/);
   assert.match(source, /CSS\.supports\('background-image', value\)/);
   assert.match(source, /replace\(' in oklch', ''\)/);
+});
+
+test('mist band stops plus cursor glow and beam backgrounds preserve syntax contrast', () => {
+  const theme = readTheme();
+  const stops = [[124, 58, 237, .08], [29, 78, 216, .075], [3, 116, 113, .065], [194, 40, 89, .06]];
+  const backgrounds = stops.map(([r, g, b, alpha]) => {
+    const band = [r, g, b].map(channel => channel * alpha + 255 * (1 - alpha));
+    return [129, 140, 248].map((channel, i) => channel * .06 + band[i] * .94);
+  });
+  backgrounds.push('#F4F4F5', '#FFFFFF');
+  for (const background of backgrounds) for (const { name, color } of syntaxForegrounds(theme)) {
+    assert.ok(contrastRatio(color, background) >= (color.toUpperCase() === '#6B7280' ? 4 : 4.5), name);
+  }
 });
 
 test('the package has no runtime dependencies, install hooks, or eager activation', () => {

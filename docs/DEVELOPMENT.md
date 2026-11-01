@@ -58,15 +58,19 @@ The editor places the cursor, selections, and click targets by measuring where c
 
 Each feature must work, in a simpler form, with the supported extension API alone. The patch may add keyframes or styles that the extension API cannot provide. Detect the patch by its marker and asset content; fall back silently when it is missing or older. Example: typing motion fades in with the API and rises with the patch.
 
-Keyword Flow is an explicit patch-only exception: its hub control and status work without the patch, but no color effect is applied. Missing or incompatible renderer support must leave normal text unchanged.
+Keyword Flow and Line Mist are explicit patch-only exceptions: their hub controls work without the patch, but no enhancement is applied. Mist falls back to the native line highlight. Method Beams uses supported gutter decorations when the renderer marker or intended theme is absent. Missing support must leave normal text unchanged.
 
 ### The Only Extension-To-Patch Channel
 
-`workbenchSignal.ts` is pure declaration logic with no VS Code import. It accepts only boolean `enabled: true` and the exact `aurora` or `spectrum` palette. It returns `none; --white-flow-keyword-flow: <palette>` or null, never arbitrary CSS or braces.
+`workbenchSignal.ts` is pure declaration logic with no VS Code import. It accepts exact palette names, mist `drift`/`still`, glow `on`/`off`, bounded numeric beam pairs, a safe revision counter, and beam motion `on`/`still`. Values never contain braces or semicolons. Builders return fixed declarations or null, never arbitrary CSS, paths, identifiers, source text, or URIs.
 
-`KeywordFlowSignal` owns at most one unapplied decoration type. The type exists only while enabled, the selected theme matches the label from `package.json`, and Workbench Reduce Motion is not `on`. Refresh and disposal remove the old type first. This path is synchronous, so no pending asynchronous creation can revive a disabled feature. Never assign this signal decoration to a range or read document contents to transmit state.
+`SignalType` owns one unapplied type per feature. Keyword Flow keeps its theme/reduced-motion gates; mist requests `still` under reduced motion and beams sends a fixed motion flag while retaining its revision counter. Refresh/disposal removes the old type first. Never apply signal types to ranges. Async symbol/call requests must validate revision, version, editor, and disposal before painting or transmitting.
 
 VS Code currently registers a decoration type's CSS rule globally before any range uses it and copies its `textDecoration` value into that rule. The renderer reads only the allowlisted custom property from eligible head stylesheets or adopted stylesheets. It checks a still-attached cached sheet first and uses a focused, visible 1500 ms poll because CSSOM `insertRule` does not trigger a MutationObserver. This is an undocumented appearance bridge, not IPC or an official configuration API. Do not add another bridge through custom DOM events, files, sockets, storage, or settings reads. If it stops working, the effect must remain off.
+
+Signals are read independently with per-property caches and one CSSOM read per sheet per poll. Keep the three existing patch payload filenames. New renderer sections remain in `keyword-flow.js`: owned styles go in the head and the beam SVG directly under the body, never inside the editor. Geometry/cursor styles are read-only. Beam layout may request one frame per event batch, never a continuous loop. Keyword/mist motion shares one 6 Hz interval. No row entrance animation may restart on typing.
+
+Focus uses document symbols, not a parser. Edit Trail applies changes bottom-up and retains bounded line/time maps. Risk Radar lexes bounded Rust text in memory and returns UTF-16 offsets; it is not a compiler or general parser.
 
 ### Accessibility and performance
 
