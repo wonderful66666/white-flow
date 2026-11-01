@@ -6,6 +6,10 @@ const crypto = require('node:crypto');
 
 const ROOT = path.resolve(__dirname, '..');
 const BLOCKED = new Set(['backups', 'reference', 'reports', 'screenshots', '.private', '.local', '.state', 'node_modules']);
+// Local build output and development dependencies at the project root. Git ignores both, and
+// neither belongs in a source release, so the audit skips them and reports that it did.
+// Anywhere else they still count as findings.
+const LOCAL_BUILD_DIRECTORIES = new Set(['node_modules', 'out']);
 const PRIVATE_NAMES = new Set(['settings.json', 'keybindings.json', 'state.json', 'install.json', 'verification.json', 'last-action.json', 'workbench.html']);
 const PATTERNS = [
   ['absolute-drive-path', /\b[A-Za-z]:[\\/]/],
@@ -37,11 +41,12 @@ function pngMetadataPresent(bytes) {
 function audit(root = ROOT) {
   const allowlist = JSON.parse(fs.readFileSync(path.join(root, 'release-files.json'), 'utf8'));
   if (!Array.isArray(allowlist) || new Set(allowlist).size !== allowlist.length) throw new Error('Invalid release allowlist.');
-  const allowed = new Set(allowlist), actual = [], findings = [], hashes = [];
+  const allowed = new Set(allowlist), actual = [], findings = [], hashes = [], skipped = [];
   function walk(directory, prefix = '') {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
       const relative = prefix + entry.name;
       if (entry.name === '.git' && !prefix) continue;
+      if (!prefix && entry.isDirectory() && LOCAL_BUILD_DIRECTORIES.has(entry.name)) { skipped.push(relative + '/'); continue; }
       if (entry.isSymbolicLink()) { findings.push({ file: relative, rule: 'symbolic-link' }); continue; }
       if (entry.isDirectory()) {
         if (BLOCKED.has(entry.name)) findings.push({ file: relative, rule: 'private-or-generated-directory' });
@@ -52,7 +57,7 @@ function audit(root = ROOT) {
   walk(root);
   for (const relative of allowlist) {
     if (typeof relative !== 'string' || relative.includes('\\') || path.posix.isAbsolute(relative) || relative.split('/').includes('..')) throw new Error('Unsafe allowlist entry.');
-    if (relative.split('/').some(part => BLOCKED.has(part)) || PRIVATE_NAMES.has(path.posix.basename(relative))) findings.push({ file: relative, rule: 'private-filename' });
+    if (relative.split('/').some(part => BLOCKED.has(part) || LOCAL_BUILD_DIRECTORIES.has(part)) || PRIVATE_NAMES.has(path.posix.basename(relative))) findings.push({ file: relative, rule: 'private-filename' });
     if (!actual.includes(relative)) findings.push({ file: relative, rule: 'missing-release-file' });
   }
   for (const relative of actual) {
@@ -67,6 +72,7 @@ function audit(root = ROOT) {
     }
   }
   return { pass: findings.length === 0, filesScanned: actual.length, findings, hashes,
+    localBuildDirectoriesSkipped: skipped,
     gitHistoryAudited: false, gitDirectoryPresent: fs.existsSync(path.join(root, '.git')),
     note: 'Heuristic working-tree audit only. Review image content and any future Git history separately.' };
 }

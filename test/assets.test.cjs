@@ -25,10 +25,30 @@ test('runtime parses and contains no network or code-text reads', () => {
   assert.match(source, /forced-colors/);
 });
 
-test('the theme package has no automatic activation or installation hooks', () => {
+test('the package has no runtime dependencies, install hooks, or eager activation', () => {
   const metadata = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.equal(metadata.main, undefined);
-  assert.equal(metadata.activationEvents, undefined);
-  assert.equal(metadata.scripts.postinstall, undefined);
+  assert.equal(metadata.main, './out/main.js');
+  // Activation after startup only; never "*" and never during startup.
+  assert.deepEqual(metadata.activationEvents, ['onStartupFinished']);
+  assert.deepEqual(metadata.extensionKind, ['ui']);
+  for (const hook of ['preinstall', 'install', 'postinstall', 'prepare']) assert.equal(metadata.scripts[hook], undefined, hook);
   assert.equal(metadata.dependencies, undefined);
+});
+
+test('every feature is off by default and the hub button only appears with the theme', () => {
+  const { contributes } = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const toggles = Object.entries(contributes.configuration.properties).filter(([key]) => key.endsWith('.enabled'));
+  assert.ok(toggles.length > 0);
+  for (const [key, schema] of toggles) assert.equal(schema.default, false, key);
+  const [button] = contributes.menus['editor/title'];
+  assert.equal(button.command, 'whiteFlow.openFeatures');
+  assert.equal(button.when, `config.workbench.colorTheme == '${contributes.themes[0].label}'`);
+});
+
+test('typing keyframes exist only when motion is allowed', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src/workbench.css'), 'utf8');
+  const guarded = css.match(/@media \(prefers-reduced-motion: no-preference\) and \(forced-colors: none\) \{\s*@keyframes white-flow-type-in \{[^}]*\}[^}]*\}\s*\}/);
+  assert.ok(guarded, 'keyframes must sit inside the reduced-motion and forced-colors guard');
+  assert.doesNotMatch(guarded[0], /\b(?:left|right|transform|scale|width|margin)\b/, 'vertical motion only');
+  assert.equal(css.match(/@keyframes white-flow-type-in/g).length, 1);
 });

@@ -21,3 +21,7 @@ shadcn/ui, Magic UI, React Bits, React, Monaco, and VS Code names identify refer
 ## CI Actions
 
 The workflow references official GitHub Actions repositories at explicit release tags. Their source is not vendored into this project. Review those upstream actions and their licenses before enabling automation.
+
+## Development Dependencies
+
+TypeScript is a development-only compiler under Apache-2.0. The Node.js and VS Code type definitions and the transitive `undici-types` definitions use MIT licenses. Versions, registry URLs, and integrity hashes are recorded in `package-lock.json`. These packages are not runtime dependencies, and their source is not included in the public source allowlist or the extension package.

@@ -1,10 +1,18 @@
 # Privacy And Data Boundaries
 
-## Runtime
+## Extension
+
+The extension contains no network client, telemetry, analytics, or upload feature. With every feature off it reads no files and registers no editor listeners.
+
+When typing motion is enabled, the extension receives document change events from VS Code. It inspects the size, line-break and bracket shape, and presence of non-ASCII characters in short inserted text, in memory, to decide whether an insertion is eligible for motion. This is a heuristic, not a reliable distinction between typing and paste. It does not store, log, or transmit code text.
+
+To choose the richer effect, the extension reads White Flow's own patch marker and patch stylesheet inside the running VS Code application directory. It never writes there. The feature hub writes only `whiteFlow.*` settings, through the VS Code configuration API, when you accept a choice.
+
+## Patch Runtime
 
 The appearance runtime contains no network client, telemetry endpoint, analytics, storage API, or code upload feature. It reads theme token CSS and editor activity events only to coordinate appearance. It does not read code text, settings, credentials, project files, or interpreter configuration.
 
-The supported theme is static data with no activation script. Selecting it changes the chosen color theme through VS Code itself; it does not change font settings or development tools.
+The color theme itself is static data. Selecting it changes the chosen color theme through VS Code itself; it does not change font settings or development tools.
 
 ## Installer
 

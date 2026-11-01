@@ -31,3 +31,6 @@ verification.json
 .idea/
 reference/
 screenshots/
+
+# TypeScript build output
+out/

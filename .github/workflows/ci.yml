@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts
+      - run: npm run compile
       - run: node --test
       - run: node --check src/keyword-flow.js
       - run: node tools/audit-release.cjs

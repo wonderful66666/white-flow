@@ -1,0 +1,71 @@
+/*
+ * Feature hub: one place to switch optional features on and off.
+ * Writes only whiteFlow.* settings through the VS Code configuration API.
+ */
+import * as vscode from 'vscode';
+import { resolveStyle } from './typingRules';
+
+interface FeatureItem extends vscode.QuickPickItem {
+  /** Boolean setting under the whiteFlow section. */
+  readonly setting: string;
+}
+
+const SETTINGS_BUTTON: vscode.QuickInputButton = {
+  iconPath: new vscode.ThemeIcon('gear'),
+  tooltip: 'Open White Flow settings'
+};
+
+function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean): FeatureItem[] {
+  const typingStyle = resolveStyle(config.get('typingMotion.style'), patchKeyframes);
+  return [{
+    label: '$(keyboard) Typing Motion',
+    description: typingStyle === 'rise' ? 'blur in and rise' : 'fade in',
+    detail: 'Only the newest typed character moves, and only vertically, so the cursor and clicks stay accurate.',
+    picked: config.get<boolean>('typingMotion.enabled', false),
+    setting: 'typingMotion.enabled'
+  }];
+}
+
+export async function openFeatureHub(patchKeyframes: boolean): Promise<void> {
+  const config = vscode.workspace.getConfiguration('whiteFlow');
+  const items = features(config, patchKeyframes);
+  const picker = vscode.window.createQuickPick<FeatureItem>();
+  picker.title = 'White Flow Features';
+  picker.placeholder = patchKeyframes
+    ? 'Everything is off by default. Workbench patch detected: full effects available.'
+    : 'Everything is off by default. Workbench patch not detected: supported effects only.';
+  picker.canSelectMany = true;
+  picker.matchOnDetail = true;
+  picker.items = items;
+  picker.selectedItems = items.filter(item => item.picked);
+  picker.buttons = [SETTINGS_BUTTON];
+
+  const accepted = await new Promise<readonly FeatureItem[] | undefined>(resolve => {
+    let result: readonly FeatureItem[] | undefined;
+    picker.onDidTriggerButton(() => {
+      picker.hide();
+      void vscode.commands.executeCommand('workbench.action.openSettings', 'whiteFlow');
+    });
+    picker.onDidAccept(() => {
+      result = picker.selectedItems;
+      picker.hide();
+    });
+    picker.onDidHide(() => {
+      picker.dispose();
+      resolve(result);
+    });
+    picker.show();
+  });
+  if (!accepted) return;
+
+  const chosen = new Set(accepted.map(item => item.setting));
+  for (const item of items) {
+    const enabled = chosen.has(item.setting);
+    if (config.get<boolean>(item.setting, false) !== enabled) {
+      // Update an existing workspace override instead of hiding a global change beneath it.
+      const target = config.inspect<boolean>(item.setting)?.workspaceValue !== undefined
+        ? vscode.ConfigurationTarget.Workspace : vscode.ConfigurationTarget.Global;
+      await config.update(item.setting, enabled, target);
+    }
+  }
+}

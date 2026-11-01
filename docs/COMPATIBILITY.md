@@ -3,6 +3,8 @@
 | Surface | Status |
 | --- | --- |
 | Color theme | Uses the supported VS Code color-theme format |
+| Feature hub and typing motion (fade) | Supported extension API; requires VS Code 1.98 or newer. Not yet validated in a desktop installation. |
+| Typing motion (rise) | Decoration CSS plus patch keyframes. Mechanism checked against the editor component in a browser, not yet in desktop VS Code. |
 | Appearance CSS and keyword runtime | Derived from assets previously exercised on Windows with VS Code 1.98.2 |
 | Portable external-resource installer | Synthetic fixture tests only; no end-to-end desktop validation for this distribution |
 | Other versions and operating systems | Not validated; experimental |
@@ -10,6 +12,14 @@
 The earlier local setup used a different injection method. Its working appearance does not establish that this portable installer will load successfully in every Electron workbench. Content Security Policy, resource loading, startup timing, and internal DOM structure can differ. File verification is not visual verification.
 
 Microsoft documents that workbench DOM/CSS replacement is outside the supported extension surface: [Extension capabilities and restrictions](https://code.visualstudio.com/api/extension-capabilities/overview#restrictions).
+
+## Typing Motion
+
+The rise style places extra CSS declarations in a decoration's `textDecoration` value. VS Code copies that value into a generated rule; extensions such as power-mode style effects rely on the same behavior, but it is not a documented contract. If a release escapes the value, the effect disappears and text renders normally. Choose `whiteFlow.typingMotion.style: fade` to use only documented decoration properties.
+
+Both `auto` and `rise` fall back to the supported fade when White Flow's marker or keyframes are absent. Edit-origin detection is heuristic: document change events do not reliably distinguish typing from short paste or programmatic insertion. Explicit `workbench.reduceMotion: on` disables both styles. The API-only fade cannot inspect OS motion preferences while that setting is `auto`.
+
+Monaco redraws a line after edits, scrolling, and some background updates. A redraw during the short animation restarts it for that character. The extension runs in a separate process from the editor, so a typed character can be drawn a frame or two before its effect starts.
 
 ## Deliberate Boundaries
 

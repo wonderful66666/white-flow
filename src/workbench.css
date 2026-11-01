@@ -21,7 +21,7 @@
 }
 .monaco-workbench.vs .monaco-editor .view-line span {
   text-shadow: none !important;
-  filter: none !important;
+  filter: none;
 }
 .monaco-workbench.vs .part.sidebar,
 .monaco-workbench.vs .part.auxiliarybar,
@@ -184,6 +184,16 @@
   15% { opacity: .8; }
   85% { opacity: .7; }
   100% { --shadcn-beam-angle: 360deg; opacity: 0; }
+}
+/* Typing motion keyframes, referenced by the extension's decoration for the newest typed
+   character. Vertical offset only: horizontal positions used for the cursor and clicks never
+   change. Defined only when motion is allowed, so reduced-motion and forced-color users get
+   ordinary static text without any extra rule. */
+@media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+  @keyframes white-flow-type-in {
+    from { opacity: .45; filter: blur(1.5px); top: .32em; }
+    to { opacity: 1; filter: blur(0); top: 0; }
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .monaco-workbench.vs .quick-input-widget,

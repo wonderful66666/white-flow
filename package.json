@@ -1,8 +1,8 @@
 {
   "name": "white-flow-vscode",
   "displayName": "White Flow",
-  "description": "A white VS Code theme with optional, reversible workbench styling and low-frequency keyword accents.",
-  "version": "0.1.0",
+  "description": "A white VS Code theme with an optional feature hub, opt-in typing motion, and reversible workbench styling.",
+  "version": "0.2.0",
   "private": true,
   "publisher": "white-flow-local",
   "license": "MIT",
@@ -10,8 +10,24 @@
     "node": ">=22",
     "vscode": "^1.98.0"
   },
-  "categories": ["Themes"],
-  "keywords": ["light theme", "white", "accessibility", "keyword accents"],
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "keywords": [
+    "light theme",
+    "white",
+    "accessibility",
+    "keyword accents",
+    "typing animation"
+  ],
+  "main": "./out/main.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
   "contributes": {
     "themes": [
       {
@@ -19,11 +35,68 @@
         "uiTheme": "vs",
         "path": "./themes/white-flow-light.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "whiteFlow.openFeatures",
+        "title": "Open Feature Hub",
+        "category": "White Flow",
+        "icon": "$(sparkle)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "whiteFlow.openFeatures",
+          "group": "navigation",
+          "when": "config.workbench.colorTheme == 'White Flow Light'"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "White Flow",
+      "properties": {
+        "whiteFlow.typingMotion.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Animate each newly typed character as it appears. Only the newest character moves, and only vertically, so the cursor and click targets stay accurate."
+        },
+        "whiteFlow.typingMotion.style": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "rise",
+            "fade"
+          ],
+          "enumDescriptions": [
+            "Use `rise` when the optional workbench patch provides its keyframes, otherwise `fade`.",
+            "Blur in and rise when the optional patch is available; otherwise fade in.",
+            "Step the opacity in with the supported decoration API only."
+          ],
+          "default": "auto",
+          "markdownDescription": "How a newly typed character appears."
+        },
+        "whiteFlow.typingMotion.durationMs": {
+          "type": "number",
+          "default": 140,
+          "minimum": 80,
+          "maximum": 300,
+          "markdownDescription": "Length of the typing motion in milliseconds. Short values keep up with fast typing."
+        }
+      }
+    }
   },
   "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
     "test": "node --test",
     "check": "node --check src/keyword-flow.js",
     "audit:release": "node tools/audit-release.cjs"
+  },
+  "devDependencies": {
+    "@types/node": "~20.19.0",
+    "@types/vscode": "~1.98.0",
+    "typescript": "~5.9.3"
   }
 }

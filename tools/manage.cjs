@@ -287,5 +287,5 @@ function main(args = process.argv.slice(2)) {
   }
 }
 
-module.exports = { createManager, locateApp, stripOwnedBlock, within, BEGIN, END, PAYLOADS, main };
+module.exports = { createManager, locateApp, stripOwnedBlock, within, BEGIN, END, PAYLOADS, HTML_LOCATIONS, main };
 if (require.main === module) process.exitCode = main();

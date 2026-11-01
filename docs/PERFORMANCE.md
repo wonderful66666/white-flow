@@ -2,6 +2,14 @@
 
 ## Runtime Design
 
+### Typing motion
+
+Typing motion is off by default and registers no editor listeners or decorations until enabled. When enabled, rise uses one decoration type with a short CSS animation; fade reuses three opacity decoration types with at most three short timers for an eligible edit batch. A subsequent edit in that document settles the earlier effect. Disabling the feature or reducing motion explicitly disposes listeners, decorations, and timers, including when patch detection was still pending.
+
+Long inserted text is rejected by length before code-point inspection. Other work is bounded to short text and at most sixteen simultaneous changes. Short paste can still look like typing to the document-change API. This is not a continuous animation per character or a guarantee about actual desktop latency.
+
+### Keyword flow
+
 The keyword effect uses one interval at six updates per second. Each tick changes `background-position` on one shared stylesheet rule. There is no animation loop per token and no continuous animation-frame callback.
 
 The runtime reads the token-color stylesheet to find matching color classes. It does not inspect code text, enumerate every code span each frame, or mutate editor tokens. A debounced refresh handles token stylesheet changes.

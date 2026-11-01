@@ -2,15 +2,15 @@
 
 ## Supported Color Theme
 
-Open this folder in VS Code. To try the theme, run **Debug: Start Debugging** with a VS Code Extension Development launch configuration, or start a separate development host:
+Open this folder in VS Code and build the extension once with `npm ci --ignore-scripts` and `npm run compile`. To try it, run **Debug: Start Debugging** with a VS Code Extension Development launch configuration, or start a separate development host:
 
 ```sh
 code --new-window --extensionDevelopmentPath .
 ```
 
-In that host, run **Preferences: Color Theme** and select **White Flow Light**. This does not install the optional patch or change fonts. To stop using the theme, select your previous theme.
+In that host, run **Preferences: Color Theme** and select **White Flow Light**. This does not install the optional patch or change fonts. Use the sparkle button in the editor title bar, or **White Flow: Open Feature Hub**, to enable optional features. To stop using the theme, select your previous theme.
 
-To build a local VSIX, review the extension manifest and select your own valid publisher identifier first. The current `white-flow-local` value is a neutral placeholder, not a registered publisher. Use Microsoft's official [extension packaging instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Packaging tools are not bundled or downloaded by this project. The VSIX allowlist includes the theme, documentation, preview image, and notices, not the application patch or local state. The interactive demo and commands below require the source checkout, not just the installed theme package.
+To build a local VSIX, review the extension manifest and select your own valid publisher identifier first. The current `white-flow-local` value is a neutral placeholder, not a registered publisher. Use Microsoft's official [extension packaging instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Packaging tools are not bundled or downloaded by this project. Run `npm run compile` before packaging. The VSIX allowlist includes the theme, compiled extension code in `out/`, documentation, preview image, and notices, not TypeScript sources, the application patch, or local state. The interactive demo and commands below require the source checkout, not just the installed theme package.
 
 ## Experimental Workbench Patch
 
@@ -64,6 +64,8 @@ Before installing a new patch version, restore the old one and use a new private
 ## Development Checks
 
 ```sh
+npm ci --ignore-scripts
+npm run compile
 node --test
 node --check src/keyword-flow.js
 node tools/audit-release.cjs

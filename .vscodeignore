@@ -12,3 +12,5 @@
 !themes/**
 !licenses/
 !licenses/**
+!out/
+!out/*.js
