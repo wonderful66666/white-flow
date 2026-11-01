@@ -3,13 +3,16 @@
 | Surface | Status |
 | --- | --- |
 | Color theme | Uses the supported VS Code color-theme format |
-| Feature hub and typing motion (fade) | Supported extension API; requires VS Code 1.98 or newer. Not yet validated in a desktop installation. |
-| Typing motion (rise) | Decoration CSS plus patch keyframes. Mechanism checked against the editor component in a browser, not yet in desktop VS Code. |
+| VSIX installation and feature-hub activation | Checked in ordinary desktop VS Code 1.98.2 on Windows; other versions and platforms remain unvalidated |
+| Typing motion (fade) | Supported extension API; requires VS Code 1.98 or newer. No cross-platform visual guarantee. |
+| Typing motion (rise) | Observed on Windows VS Code 1.98.2 with a separate legacy-compatible local adapter; the public portable installer is not covered by that observation |
 | Appearance CSS and keyword runtime | Derived from assets previously exercised on Windows with VS Code 1.98.2 |
 | Portable external-resource installer | Synthetic fixture tests only; no end-to-end desktop validation for this distribution |
 | Other versions and operating systems | Not validated; experimental |
 
 The earlier local setup used a different injection method. Its working appearance does not establish that this portable installer will load successfully in every Electron workbench. Content Security Policy, resource loading, startup timing, and internal DOM structure can differ. File verification is not visual verification.
+
+The GitHub Release VSIX contains the theme and extension, not that private adapter or any installed application files. Blur-rise, keyword flow, and complete workbench styling still require an independently reviewed, compatible application patch. Do not copy another person's settings, application HTML, private scripts, or backups to reproduce the appearance.
 
 Microsoft documents that workbench DOM/CSS replacement is outside the supported extension surface: [Extension capabilities and restrictions](https://code.visualstudio.com/api/extension-capabilities/overview#restrictions).
 

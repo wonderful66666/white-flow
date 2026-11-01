@@ -2,7 +2,9 @@
 
 A white VS Code theme with an optional feature hub, opt-in editor effects, and optional workbench polish. Existing editor font settings are left alone.
 
-**Status: experimental source distribution, not a Marketplace release.** The color theme and the feature hub use the supported extension API. The optional workbench patch uses unsupported internals and is experimental. Read the [compatibility notes](docs/COMPATIBILITY.md) before installing it.
+**Status: experimental VSIX and source release, not a Marketplace release.** The color theme and the feature hub use the supported extension API. The optional workbench patch uses unsupported internals and is experimental. Read the [compatibility notes](docs/COMPATIBILITY.md) before installing it.
+
+**Download:** [White Flow v0.2.0](https://github.com/wonderful66666/white-flow/releases/tag/v0.2.0), then choose `white-flow-vscode-0.2.0.vsix` under **Assets**. The automatic source archives are not extension installation packages.
 
 ![Synthetic White Flow preview](demo/preview.png)
 
@@ -20,15 +22,25 @@ While **White Flow Light** is selected, a sparkle button in the editor title bar
 
 The patch does not install React, Motion, Magic UI, or React Bits into VS Code. It is a small CSS/DOM adaptation inspired by those visual styles, not an official integration.
 
-## Start Safely
+## Install The Released VSIX
 
-1. Read [Installation](docs/INSTALLATION.md), including the difference between a normal theme and an application patch.
-2. Try the theme alone first. Run `npm ci --ignore-scripts` and `npm run compile`, then select **White Flow Light** in an extension development host, or package the extension for local installation.
-3. Open the feature hub and turn on only the features you want.
-4. For the optional patch, run the read-only plan, choose a private backup directory outside this project, and explicitly confirm installation.
-5. Keep the private state directory for restoration. Never commit or upload it.
+1. Use desktop VS Code 1.98 or newer. Download the `.vsix` asset from the release above.
+2. Open the Command Palette and run **Extensions: Install from VSIX...**, then select that file.
+3. Reload VS Code if requested. Open it normally; an Extension Development Host is not required.
+4. Run **White Flow: Open Feature Hub**, select the features you want, and press Enter to apply. Features are off by default.
+5. Optionally select **White Flow Light** through **Preferences: Color Theme**. Installing the VSIX does not switch your theme or change your fonts.
 
-Node.js 22 or newer is needed for development and the local tools. There are no runtime dependencies and no install hooks; TypeScript and type definitions are development dependencies only. The optional installer never downloads anything or elevates privileges automatically.
+The VSIX needs no Node.js, npm, Python, or Conda setup. It is a local unsigned package with the identifier `white-flow-local.white-flow-vscode`, not a verified Marketplace listing. Review the source and release checksum before installing.
+
+**The VSIX alone does not apply the full skin.** It provides the theme, feature hub, and supported fade effect. Keyword color flow, workbench polish, and blur-and-rise typing require the separate optional application patch in this repository. See [the patch guide](docs/INSTALLATION.md#experimental-workbench-patch) before using it; it changes installed application resources, requires a private backup, and remains experimental.
+
+If typing motion is enabled but nothing changes, check **Workbench: Reduce Motion**. `on` deliberately disables the effect. Change that preference only if you want motion; the extension never changes it automatically.
+
+VSIX installations do not provide Marketplace auto-updates by default. Install a newer release asset manually when upgrading. See [Installation](docs/INSTALLATION.md) for checksums, removal, source builds, patch installation, and restoration.
+
+## Build From Source
+
+Node.js 22 or newer is needed only for source development and the optional patch tools. There are no runtime dependencies and no install hooks; TypeScript and type definitions are development dependencies only. The optional installer never downloads anything or elevates privileges automatically.
 
 ```sh
 npm ci --ignore-scripts

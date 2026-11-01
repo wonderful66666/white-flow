@@ -1,6 +1,62 @@
 # Installation And Restoration
 
-## Supported Color Theme
+## Install The Release Asset
+
+Use desktop VS Code 1.98 or newer. Download `white-flow-vscode-0.2.0.vsix` from the [v0.2.0 Release](https://github.com/wonderful66666/white-flow/releases/tag/v0.2.0). Choose the actual `.vsix` under **Assets**, not **Source code (zip)** or **Source code (tar.gz)**.
+
+1. Open the Command Palette with Ctrl+Shift+P, or Cmd+Shift+P on macOS.
+2. Run **Extensions: Install from VSIX...** and select the downloaded file.
+3. Reload the window if VS Code requests it.
+4. Run **White Flow: Open Feature Hub**, select **Typing Motion** if desired, and press Enter to apply. All features are off by default.
+5. Optionally select **White Flow Light** from **Preferences: Color Theme**. The command works with any theme; the title-bar button appears only with White Flow Light.
+
+You can also use the official CLI:
+
+```sh
+code --install-extension ./white-flow-vscode-0.2.0.vsix
+```
+
+No build tools, Node.js, npm, Python, Conda, developer mode, or extension-development startup command are required to use this VSIX. If an old process was launched in Extension Development Host mode, save your work, close all VS Code windows, and launch your usual VS Code shortcut normally once. Do not keep using `--extensionDevelopmentPath` for everyday use.
+
+The package is unsigned and uses the local identifier `white-flow-local.white-flow-vscode`; it is not a verified Marketplace publication. Review the source and the SHA-256 checksum shown in the Release notes before trusting it. The release publishes the extension package only, never a user profile, private patch adapter, configuration, key, or backup.
+
+To verify a download in PowerShell, compare this result with the Release notes:
+
+```powershell
+Get-FileHash ./white-flow-vscode-0.2.0.vsix -Algorithm SHA256
+```
+
+VSIX-installed extensions do not receive Marketplace auto-updates by default. Download and install a newer VSIX manually when updating. To remove this extension, use its **Uninstall** action in the Extensions view, or:
+
+```sh
+code --uninstall-extension white-flow-local.white-flow-vscode
+```
+
+Uninstalling the extension does not remove an independently installed workbench patch. Restore that patch separately using its matching private state directory.
+
+## Which Effects Need The Patch?
+
+| Effect | VSIX Alone | VSIX Plus Optional Patch |
+| --- | --- | --- |
+| White Flow Light color theme | Yes; select it manually | Yes |
+| Feature hub | Yes | Yes |
+| Typing fade | Yes, when enabled | Yes, with style `fade` |
+| Blur-and-rise typing | No; falls back to fade | Requires the patch marker and typing keyframes |
+| Keyword color flow | No | Requires the patch runtime and matching token colors |
+| Rounded workbench controls and popup polish | No | Requires the workbench CSS |
+
+**Full visual effects require both layers. Installing the VSIX does not install, update, or elevate the optional patch.** Source code for the public patch is in `src/` and `tools/manage.cjs`, available in a source checkout or the source archive. Its portable installer is still fixture-tested only. A working legacy local setup is not proof that this installer will work on your desktop. Read [Compatibility](COMPATIBILITY.md) and try a disposable installation first.
+
+## Motion Troubleshooting
+
+- Check that Typing Motion is selected in the hub and confirm with Enter; cancelling the picker saves nothing.
+- **Workbench: Reduce Motion** set to `on` disables both typing styles even if the feature checkbox is enabled. Choose `off` only when you explicitly want motion. The extension never changes this setting itself.
+- With style `auto` or `rise`, missing patch keyframes cause a supported fade fallback. Seeing the theme does not prove the patch is installed.
+- OS reduced-motion and forced-color preferences disable the patch keyframes. The API-only fade cannot detect those OS preferences when the workbench setting is `auto`.
+- The default effect is short (140 ms) and applies to new short insertions, not existing text or entire lines. Some short paste can also animate because edit-origin detection is heuristic.
+- Reload the window after applying or restoring the application patch. Do not disable security protections if effects fail to load.
+
+## Build Or Try The Source
 
 Open this folder in VS Code and build the extension once with `npm ci --ignore-scripts` and `npm run compile`. To try it, run **Debug: Start Debugging** with a VS Code Extension Development launch configuration, or start a separate development host:
 
@@ -10,7 +66,7 @@ code --new-window --extensionDevelopmentPath .
 
 In that host, run **Preferences: Color Theme** and select **White Flow Light**. This does not install the optional patch or change fonts. Use the sparkle button in the editor title bar, or **White Flow: Open Feature Hub**, to enable optional features. To stop using the theme, select your previous theme.
 
-To build a local VSIX, review the extension manifest and select your own valid publisher identifier first. The current `white-flow-local` value is a neutral placeholder, not a registered publisher. Use Microsoft's official [extension packaging instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Packaging tools are not bundled or downloaded by this project. Run `npm run compile` before packaging. The VSIX allowlist includes the theme, compiled extension code in `out/`, documentation, preview image, and notices, not TypeScript sources, the application patch, or local state. The interactive demo and commands below require the source checkout, not just the installed theme package.
+To build a local VSIX, review the extension manifest. The current `white-flow-local` value is a local identifier, not a registered publisher; a Marketplace account is not required to install the provided VSIX. Publishing your own Marketplace listing requires your own registered publisher. Use Microsoft's official [extension packaging instructions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension). Packaging tools are not bundled or downloaded by this project. Run `npm run compile` before packaging. The VSIX allowlist includes the theme, compiled extension code in `out/`, documentation, preview image, and notices, not TypeScript sources, the application patch, or local state. The interactive demo and commands below require the source checkout, not just the installed theme package.
 
 ## Experimental Workbench Patch
 
