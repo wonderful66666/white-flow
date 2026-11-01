@@ -4,10 +4,11 @@
  */
 import * as vscode from 'vscode';
 import { resolveStyle } from './typingRules';
+import { POLISH_EFFECTS } from './workbenchSignal';
 
 interface FeatureItem extends vscode.QuickPickItem {
   /** Boolean setting under the whiteFlow section. */
-  readonly setting: string;
+  readonly setting?: string;
 }
 
 const SETTINGS_BUTTON: vscode.QuickInputButton = {
@@ -54,7 +55,19 @@ function features(config: vscode.WorkspaceConfiguration, patchKeyframes: boolean
 
 export async function openFeatureHub(patchKeyframes: boolean, patchPresent = patchKeyframes): Promise<void> {
   const config = vscode.workspace.getConfiguration('whiteFlow');
-  const items = features(config, patchKeyframes, patchPresent);
+  const existing = features(config, patchKeyframes, patchPresent);
+  const patchOnly = new Set(['keywordFlow.enabled', 'lineMist.enabled']);
+  const items: FeatureItem[] = [
+    { label: 'Editor', kind: vscode.QuickPickItemKind.Separator },
+    ...existing.filter(item => !patchOnly.has(item.setting!)),
+    { label: '$(edit) TODO Marker', description: 'extension only', detail: 'Comment tags with marker or flat styling; line-local comment detection is heuristic.',
+      setting: 'todoMarker.enabled', picked: config.get<boolean>('todoMarker.enabled', false) },
+    { label: 'Workbench patch', kind: vscode.QuickPickItemKind.Separator },
+    ...existing.filter(item => patchOnly.has(item.setting!)),
+    ...POLISH_EFFECTS.map(effect => ({ label: effect.label, setting: `${effect.setting}.enabled`,
+      description: patchPresent ? 'workbench patch detected' : 'patch missing: no effect',
+      detail: 'Requires a matching workbench patch and the White Flow theme.', picked: config.get<boolean>(`${effect.setting}.enabled`, false) }))
+  ];
   const picker = vscode.window.createQuickPick<FeatureItem>();
   picker.title = 'White Flow Features';
   picker.placeholder = patchPresent
@@ -86,6 +99,7 @@ export async function openFeatureHub(patchKeyframes: boolean, patchPresent = pat
 
   const chosen = new Set(accepted.map(item => item.setting));
   for (const item of items) {
+    if (!item.setting) continue;
     const enabled = chosen.has(item.setting);
     if (config.get<boolean>(item.setting, false) !== enabled) {
       // Update an existing workspace override instead of hiding a global change beneath it.

@@ -6,6 +6,8 @@ const { beamPairs } = require('../out/beamRules');
 const trail = require('../out/trailRules');
 const { scanRust } = require('../out/rustScanner');
 const { mistDeclaration, beamsDeclaration } = require('../out/workbenchSignal');
+const { polishDeclaration, POLISH_EFFECTS } = require('../out/workbenchSignal');
+const { findTags, markerImage } = require('../out/todoRules');
 const range = (start, end, a = 0, b = 10) => ({ start: { line: start, character: a }, end: { line: end, character: b } });
 
 test('focus chooses innermost callable symbols and handles flat and empty providers', () => {
@@ -84,4 +86,37 @@ test('Rust test bodies are skipped by default but ordinary code is still inspect
   assert.deepEqual(scanRust(text).map(risk => risk.kind), ['expect']);
   assert.deepEqual(scanRust(text, false).map(risk => risk.kind), ['unwrap', 'unsafe', 'panic', 'expect']);
   assert.deepEqual(scanRust('"unterminated panic!()'), []);
+});
+
+test('polish tokens are allowlisted, sorted, unique, and motion-aware', () => {
+  assert.equal(polishDeclaration(['sticky-glass', 'keycaps', 'keycaps']), 'none; --white-flow-polish: keycaps sticky-glass');
+  assert.equal(polishDeclaration(POLISH_EFFECTS.map(effect => effect.token), true), 'none; --white-flow-polish: backlight engraved keycaps sticky-glass toast-stack');
+  assert.equal(polishDeclaration(['engraved'], true), 'none; --white-flow-polish: engraved');
+  assert.equal(polishDeclaration(['dock', 'save-shine', 'celebrate'], true), null);
+  assert.equal(polishDeclaration([]), null);
+  for (const tokens of [['unknown'], ['__proto__'], ['dock; color:red'], ['dock sticky-glass'], [null], 'keycaps', undefined]) assert.equal(polishDeclaration(tokens), null);
+});
+
+test('TODO comment heuristic handles each language family, words, colons, and strings', () => {
+  for (const [text, language, expected] of [
+    ['let x = 1; // TODO: next FIXME HACK', 'rust', ['TODO', 'FIXME', 'HACK']],
+    ['value = 1 # TODO:', 'python', ['TODO']], ['local x = 1 -- FIXME:', 'lua', ['FIXME']],
+    ['select 1; -- HACK', 'sql', ['HACK']], ['<!-- TODO: --> TODO', 'html', ['TODO']],
+    [' * FIXME: block continuation', 'java', ['FIXME']], ['/* TODO */ HACK', 'typescript', ['TODO']],
+    ['const s = "// TODO"; // HACK:', 'javascript', ['HACK']],
+    ['x = "# TODO"', 'python', []], ['// TODOS HACKER NOTODO _FIXME FIXME_', 'c', []],
+    ["let x: &'a str; // TODO", 'rust', ['TODO']], ['// TODO', 'plaintext', []]
+  ]) assert.deepEqual(findTags(text, language).map(match => match.tag), expected, text);
+  assert.deepEqual(findTags('// TODO:', 'java'), [{ tag: 'TODO', start: 3, end: 8 }]);
+  assert.deepEqual(findTags('/* done */ const TODO = 1;', 'java'), []);
+});
+
+test('marker background values contain only an encoded SVG, never CSS separators or spacing', () => {
+  for (const tag of ['TODO', 'FIXME', 'HACK']) {
+    const value = markerImage(tag); assert.match(value, /^url\("data:image\/svg\+xml,/);
+    assert.doesNotMatch(value, /[{};]|padding|margin|letter-spacing/);
+    const svg = decodeURIComponent(value.slice('url("data:image/svg+xml,'.length, -2));
+    assert.match(svg, /viewBox="0 0 100 24"/); assert.match(svg, /fill-opacity=".62"/);
+  }
+  assert.equal(markerImage('TODO;'), null); assert.equal(markerImage('__proto__'), null);
 });

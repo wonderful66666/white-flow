@@ -31,6 +31,7 @@ function fixture() {
       uri: { scheme, toString: () => scheme + ':' + name }, languageId, version: 1, isClosed: false,
       get lineCount() { return source.split('\n').length; },
       getText() { reads++; return source; },
+      lineAt(line) { reads++; const text = source.split('\n')[line]; return { text }; },
       replace(text) { source = text; document.version++; },
       positionAt(offset) { const before = source.slice(0, offset).split('\n'); return new Position(before.length - 1, before.at(-1).length); },
       offsetAt(position) { const lines = source.split('\n'); return lines.slice(0, position.line).reduce((sum, line) => sum + line.length + 1, 0) + Math.min(position.character, (lines[position.line] || '').length); },
@@ -43,6 +44,7 @@ function fixture() {
     const editor = {
       document, selection: new Selection(position, position),
       get selections() { return this.multiple || [this.selection]; },
+      get visibleRanges() { return this.viewRanges || [new Range(0, 0, document.lineCount - 1, 0)]; },
       setDecorations(type, ranges) {
         assert.ok(frames.has(type), 'disposed types cannot be painted');
         if (!paints.has(editor)) paints.set(editor, new Map());
@@ -57,6 +59,7 @@ function fixture() {
     Position, Range, Selection, OverviewRulerLane: { Left: 1, Right: 4 }, TextEditorRevealType: { InCenter: 1 },
     DecorationRangeBehavior: { ClosedClosed: 1 }, ConfigurationTarget: { Global: 1, Workspace: 2 },
     ThemeIcon: class { constructor(id) { this.id = id; } },
+    QuickPickItemKind: { Separator: -1 },
     MarkdownString: class { constructor(value) { this.value = value; this.isTrusted = false; } },
     Uri: { parse: value => ({ toString: () => value }) }, env: { appRoot: '/synthetic-app' },
     workspace: {
@@ -68,6 +71,7 @@ function fixture() {
       activeTextEditor: editor, visibleTextEditors: [editor], state: { focused: true },
       onDidChangeTextEditorSelection: on('selection'), onDidChangeActiveTextEditor: on('active'),
       onDidChangeVisibleTextEditors: on('visible'), onDidChangeWindowState: on('window'),
+      onDidChangeTextEditorVisibleRanges: on('ranges'),
       createTextEditorDecorationType(options) {
         const type = { options, dispose() { frames.delete(type); for (const map of paints.values()) map.delete(type); } };
         frames.add(type); return type;

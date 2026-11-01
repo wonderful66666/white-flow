@@ -2,12 +2,13 @@
 import * as vscode from 'vscode';
 import { signalDeclaration } from './workbenchSignal';
 import { SignalType } from './signalType';
+import { matchesTheme, ThemeLabels } from './themeSupport';
 
 export class KeywordFlowSignal implements vscode.Disposable {
   private readonly signal = new SignalType();
   private disposed = false;
 
-  constructor(private readonly themeLabel: string) {}
+  constructor(private readonly themeLabels: ThemeLabels) {}
 
   refresh(): void {
     this.signal.clear();
@@ -19,7 +20,7 @@ export class KeywordFlowSignal implements vscode.Disposable {
     });
     if (!declaration) return;
     const workbench = vscode.workspace.getConfiguration('workbench');
-    if (workbench.get<string>('colorTheme') !== this.themeLabel || workbench.get<string>('reduceMotion') === 'on') return;
+    if (!matchesTheme(workbench.get<string>('colorTheme'), this.themeLabels) || workbench.get<string>('reduceMotion') === 'on') return;
     this.signal.set(declaration);
   }
 

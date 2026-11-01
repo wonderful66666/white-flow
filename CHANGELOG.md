@@ -2,6 +2,19 @@
 
 ## 0.3.0 - Unreleased
 
+- Add White Flow Ink: deeper syntax roles, cool matte editor, matching gutter/file surfaces, and white popups; retain Light's original colors and fonts.
+- Follow native theme variables in the optional patch instead of forcing all light themes white. Preserve legacy Light-only decorative edge shades.
+- Accept every contributed theme label for signals and both reserved keyword colors in the renderer; show the hub title action for Light or Ink.
+- Add default-off Engraved polish: separator highlights and a bounded, static editor inset shadow, with no native geometry changes and no forced-color treatment.
+- Add paired-theme contrast/structure tests and a synthetic Light/Ink/Engraved preview without regenerating the public PNG.
+- Add a sorted, allowlisted aggregate polish signal, preserving keyword behavior and dropping motion-only tokens under Workbench Reduce Motion.
+- Group the feature hub into Editor and Workbench patch sections without treating separators as settings.
+- Add default-off Sticky Glass, Keycaps, empty-editor Backlight, keyboard-expandable Toast Stack, Save Shine, Celebrate, and activity-bar Dock.
+- Add theme keybinding-label colors and preserve target native key/toast heights in synthetic browser checks.
+- Add extension-only TODO Marker with visible-range overscan, quote/comment heuristics, encoded SVG strokes, a supported flat style, and contrast tests.
+- Gate save feedback on a recent manual-save gesture plus dirty-state removal; debounce error-zero celebration and impose a cooldown.
+- Honor current and legacy workbench motion classes plus OS motion, transparency, and forced-color preferences; clean observers, styles, and overlays on disable/disposal.
+- Keep all new settings off by default, all public files English/ASCII, and all private state outside the repository.
 - Add translucent read/write occurrence colors with alpha-composited contrast checks.
 - Add default-off Focus Mode using cached document symbols and stale-result protection.
 - Generalize the declaration-only bridge for independent palette, mist, and bounded beam metadata, with one unapplied type per feature.

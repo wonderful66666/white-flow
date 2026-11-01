@@ -1,10 +1,18 @@
-/* B: keyword flow. No font, white-background, text, or layout overrides. */
+/* Decorative edges follow the theme; retain the original Light-only strokes. */
+.monaco-workbench.vs {
+  --wf-group-edge: var(--vscode-editorGroup-border);
+  --wf-lane-edge: var(--vscode-editorGroup-border);
+}
+.monaco-workbench.vs[class*="-themes-white-flow-light-json"] {
+  --wf-group-edge: #e8e8ed;
+  --wf-lane-edge: #eeeef2;
+}
 .monaco-workbench.vs .part.editor .editor-group-container {
-  box-shadow: inset 0 0 0 1px #e8e8ed;
+  box-shadow: inset 0 0 0 1px var(--wf-group-edge);
 }
 .monaco-workbench.vs .part.editor .breadcrumbs-below-tabs {
-  box-shadow: inset 0 -1px 0 #eeeef2;
+  box-shadow: inset 0 -1px 0 var(--wf-lane-edge);
 }
 .monaco-workbench.vs .part.editor .monaco-editor .margin {
-  box-shadow: inset -1px 0 0 #eeeef2;
+  box-shadow: inset -1px 0 0 var(--wf-lane-edge);
 }

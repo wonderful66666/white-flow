@@ -16,7 +16,7 @@ Node.js 22 or newer is required for development. Extensions run on the Node.js v
 
 ## Layout
 
-- `themes/`: the color theme. No fonts, machine settings, or code.
+- `themes/`: Light and Ink color-theme data with identical structure and scope lists. No fonts, machine settings, or code.
 - `extension/`: TypeScript sources. `main.ts` is the entry point, `hub.ts` the feature hub, and each feature lives in its own module.
 - `out/`: compiled JavaScript. Generated, ignored by Git, included in a VSIX.
 - `src/`: optional workbench patch assets.
@@ -60,11 +60,19 @@ Each feature must work, in a simpler form, with the supported extension API alon
 
 Keyword Flow and Line Mist are explicit patch-only exceptions: their hub controls work without the patch, but no enhancement is applied. Mist falls back to the native line highlight. Method Beams uses supported gutter decorations when the renderer marker or intended theme is absent. Missing support must leave normal text unchanged.
 
+Workbench polish is another explicit patch-only family: its fallback is the unchanged native interface. Static theme keybinding colors are independent of the Keycaps switch. TODO Marker needs no application patch; its flat tier is supported, while its SVG tier uses fixed declaration injection and must retain a flat fallback.
+
 ### The Only Extension-To-Patch Channel
 
 `workbenchSignal.ts` is pure declaration logic with no VS Code import. It accepts exact palette names, mist `drift`/`still`, glow `on`/`off`, bounded numeric beam pairs, a safe revision counter, and beam motion `on`/`still`. Values never contain braces or semicolons. Builders return fixed declarations or null, never arbitrary CSS, paths, identifiers, source text, or URIs.
 
 `SignalType` owns one unapplied type per feature. Keyword Flow keeps its theme/reduced-motion gates; mist requests `still` under reduced motion and beams sends a fixed motion flag while retaining its revision counter. Refresh/disposal removes the old type first. Never apply signal types to ranges. Async symbol/call requests must validate revision, version, editor, and disposal before painting or transmitting.
+
+`PolishEffects` owns one aggregate type for the polish family. `--white-flow-polish` is a sorted, unique space-separated list from eight fixed tokens; arbitrary strings are rejected. No tokens means no type. Motion tokens are filtered under Workbench Reduce Motion; static Engraved remains. Renderer-owned `swb-polish-style` concatenates named blocks only when the set changes. Temporary save rules are inserted/deleted through CSSOM without rebuilding the stylesheet or changing native tab nodes. Save and error-count events are observed natively in the renderer, not transmitted through another bridge.
+
+Read every contributed theme label in `main.ts` and use exact label membership for signals. The renderer's reserved keyword colors must track both themes without broadening to other syntax roles. Base patch surfaces use native theme variables; any legacy theme-specific values require the sanitized theme-path suffix guard. Engraved adds no dimensions/position declarations to native boxes; its 8 px owned pseudo-element is the deliberate exception. Keep the original Light comment/selection contrast exception documented rather than silently changing its palette. The synthetic preview's inline palette projection is tested against the theme files.
+
+TODO stroke generation returns an encoded SVG CSS value with no braces or semicolons. Full `textDecoration` injection necessarily contains fixed declaration separators, just like typing rise; those separators are program constants, never part of a user-controlled value. Do not confuse value validation with forbidding the separators required by CSS grammar.
 
 VS Code currently registers a decoration type's CSS rule globally before any range uses it and copies its `textDecoration` value into that rule. The renderer reads only the allowlisted custom property from eligible head stylesheets or adopted stylesheets. It checks a still-attached cached sheet first and uses a focused, visible 1500 ms poll because CSSOM `insertRule` does not trigger a MutationObserver. This is an undocumented appearance bridge, not IPC or an official configuration API. Do not add another bridge through custom DOM events, files, sockets, storage, or settings reads. If it stops working, the effect must remain off.
 
@@ -74,8 +82,10 @@ Focus uses document symbols, not a parser. Edit Trail applies changes bottom-up 
 
 ### Accessibility and performance
 
-- Honor `workbench.reduceMotion` in the extension and `prefers-reduced-motion` and `forced-colors` in patch CSS. Prefer defining keyframes only inside a media query that allows motion.
+- Honor `workbench.reduceMotion`, both workbench motion class names, OS reduced motion, forced colors, and reduced transparency for blur/translucent treatments. Prefer defining keyframes only where motion is allowed; one-shot keyframes may exist while their guarded trigger is inactive.
 - Do not run a continuous animation loop per element. Prefer one shared rule, short one-shot animations, and work proportional to user actions.
+
+Patch code must not modify native workbench nodes either. CSS pseudo-elements are allowed; confetti may append only its owned decorative overlay to the body. Keycaps must compensate the extra bottom border rather than grow rows. Toast stacking must not change individual heights, remove toasts, or hide them with display:none. Match the target source's DOM order and preserve keyboard expansion. Changes in internal selectors require fail-quiet guards and compatibility notes, not writes to native markup.
 - Skip long, multiline, and large multi-cursor edits. Document change events cannot identify short paste or every programmatic insertion, so describe that heuristic limitation honestly.
 
 ### Data boundaries

@@ -1,7 +1,7 @@
 {
   "name": "white-flow-vscode",
   "displayName": "White Flow",
-  "description": "A white VS Code theme with opt-in typing motion, switchable keyword flow, and optional workbench styling.",
+  "description": "Airy Light and matte Ink themes with opt-in editor effects and optional workbench styling.",
   "version": "0.3.0",
   "private": true,
   "publisher": "white-flow-local",
@@ -34,6 +34,11 @@
         "label": "White Flow Light",
         "uiTheme": "vs",
         "path": "./themes/white-flow-light.json"
+      },
+      {
+        "label": "White Flow Ink",
+        "uiTheme": "vs",
+        "path": "./themes/white-flow-ink.json"
       }
     ],
     "commands": [
@@ -59,13 +64,23 @@
         {
           "command": "whiteFlow.openFeatures",
           "group": "navigation",
-          "when": "config.workbench.colorTheme == 'White Flow Light'"
+          "when": "config.workbench.colorTheme =~ /^White Flow (Light|Ink)$/"
         }
       ]
     },
     "configuration": {
       "title": "White Flow",
       "properties": {
+        "whiteFlow.engraved.enabled": { "type": "boolean", "default": false, "markdownDescription": "Add static engraved separators and a faint editor inset shadow. Requires the optional workbench patch and either White Flow theme." },
+        "whiteFlow.stickyGlass.enabled": { "type": "boolean", "default": false, "markdownDescription": "Frost Sticky Scroll headers. Requires the optional workbench patch." },
+        "whiteFlow.keycaps.enabled": { "type": "boolean", "default": false, "markdownDescription": "Add sculpted shortcut keycaps. Requires the optional workbench patch." },
+        "whiteFlow.backlight.enabled": { "type": "boolean", "default": false, "markdownDescription": "Add a static light behind empty editor watermarks. Requires the optional workbench patch." },
+        "whiteFlow.toastStack.enabled": { "type": "boolean", "default": false, "markdownDescription": "Stack notification toasts, expanding on hover or keyboard focus. Requires the optional workbench patch." },
+        "whiteFlow.todoMarker.enabled": { "type": "boolean", "default": false, "markdownDescription": "Highlight TODO, FIXME, and HACK tags in visible comment lines. No workbench patch required." },
+        "whiteFlow.todoMarker.style": { "type": "string", "enum": ["marker", "flat"], "default": "marker", "enumDescriptions": ["Use an encoded SVG stroke via the experimental decoration declaration technique.", "Use a flat background through the supported decoration API."], "markdownDescription": "Comment-tag highlight style." },
+        "whiteFlow.saveShine.enabled": { "type": "boolean", "default": false, "markdownDescription": "Sweep the active tab label after a detected manual save. Requires the optional workbench patch." },
+        "whiteFlow.celebrate.enabled": { "type": "boolean", "default": false, "markdownDescription": "Celebrate when the status-bar error count settles to zero. Not a build-success detector. Requires the optional workbench patch." },
+        "whiteFlow.dock.enabled": { "type": "boolean", "default": false, "markdownDescription": "Magnify vertical activity bar icons on hover or keyboard focus. Requires the optional workbench patch." },
         "whiteFlow.focusMode.enabled": {
           "type": "boolean", "default": false,
           "markdownDescription": "Dim code outside the current function using document symbols. No workbench patch required."
@@ -109,7 +124,7 @@
         "whiteFlow.keywordFlow.enabled": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Enable keyword color flow. Requires the updated optional workbench patch and the White Flow Light theme."
+          "markdownDescription": "Enable keyword color flow. Requires the updated optional workbench patch and either White Flow theme."
         },
         "whiteFlow.keywordFlow.palette": {
           "type": "string",

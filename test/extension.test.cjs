@@ -33,6 +33,7 @@ function fixture() {
     ConfigurationTarget: { Global: 1, Workspace: 2 },
     Range: class { constructor(start, end) { this.start = start; this.end = end; } },
     ThemeIcon: class { constructor(id) { this.id = id; } },
+    QuickPickItemKind: { Separator: -1 },
     env: { appRoot: '/synthetic-app' },
     commands: {
       executeCommand: async () => undefined,
@@ -311,4 +312,14 @@ test('keyword settings do not recreate independent typing-motion decorations', (
   f.set('whiteFlow.keywordFlow.palette', 'spectrum'); f.configure('whiteFlow.keywordFlow.palette');
   assert.deepEqual([...f.frames], before);
   for (const disposable of context.subscriptions) disposable.dispose();
+});
+
+test('hub groups all feature toggles and never writes separator labels as settings', async () => {
+  const f = fixture(), done = f.load('hub').openFeatureHub(false, false);
+  assert.deepEqual(Array.from(f.picker.items).filter(item => item.kind === -1).map(item => item.label), ['Editor', 'Workbench patch']);
+  const properties = require('../package.json').contributes.configuration.properties;
+  const expected = Object.keys(properties).filter(key => key.endsWith('.enabled')).map(key => key.slice('whiteFlow.'.length)).sort();
+  assert.deepEqual(Array.from(f.picker.items).filter(item => item.setting).map(item => item.setting).sort(), expected);
+  f.picker.selectedItems = f.picker.items.filter(item => item.kind === -1); f.picker.accept(); await done;
+  assert.deepEqual(f.updates, []);
 });

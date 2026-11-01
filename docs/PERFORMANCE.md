@@ -42,6 +42,20 @@ Scanning runs in the extension host and can briefly occupy it on dense inputs. T
 
 ## Real Costs
 
+### Ink and Engraved
+
+Ink is static theme data: no additional editor listener, timer, scanner, or runtime dependency. Engraved adds one named CSS block through the existing aggregate polish signal, not a new polling channel. It has no animation, blur, or JavaScript layout work. Its box shadows and 8 px gradient pseudo-element can still add paint work on scrolling. Native boxes retain their geometry and the code font remains untouched. Reduced motion keeps this static treatment; forced colors removes it. No measured whole-editor CPU or battery guarantee is implied.
+
+### Polish and comment tags
+
+Polish adds no continuous JavaScript animation loop. Its sheet is rebuilt only when the canonical token set changes. Save observers watch tab/group classes only; a 1500 ms gesture window gates a one-shot 600 ms animation. Error-zero detection uses one 800 ms settle timer, a 30-second cooldown, and 26 one-shot CSS particles for 900 ms. CSS animation runs at the browser's paint rate, not the shared 6 Hz rule-write rate. Observers and transient feedback are disconnected/canceled while backgrounded or disabled.
+
+Static glass, keycaps, backlight, stacking, and Dock rely on CSS. Static does not mean free: backdrop/filter blur, conic/radial gradients, stacking compositing, and scaling can add GPU work during scrolling or interaction. Reduced transparency restores opaque glass/native blur treatment; reduced motion disables Dock and feedback. Keycap outer height and individual toast offsetHeight are checked against pinned native styles with synthetic content, not a real installation.
+
+TODO Marker debounces 200 ms and scans visible ranges plus 50 lines with per-editor caps: 20,000 lines, 1 MiB of examined text, 200,000 characters per line, and 10,000 marks. Overlapping ranges are not rescanned. The SVG is static and encoded, with no spacing or per-tag animation. Both styles have foreground contrast tests over their specified flat or alpha-composited backgrounds. The comment heuristic deliberately avoids whole-file parsing and can miss unusual literal/comment forms.
+
+Sticky Glass contrast checks cover compositing over the defined white/current-line surfaces, not every possible blurred pixel backdrop. Content behind translucent headers can change contrast; prefer reduced transparency or disable glass when it hurts reading. No CPU, GPU, battery, or latency guarantee follows from these checks.
+
 Low timer frequency does not make repainting free. Gradient text can still cause additional rasterization and compositing. Cost depends on visible token count, display scaling, GPU drivers, other extensions, editor layout, and the VS Code/Electron version. Large files do not necessarily mean many visible tokens, because Monaco virtualizes the viewport.
 
 No cross-machine CPU, GPU, battery, or typing-latency claim is made for this distribution. Synthetic browser task-time measurements are not equivalent to whole-process CPU usage or actual VS Code responsiveness.

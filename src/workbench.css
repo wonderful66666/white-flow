@@ -6,17 +6,31 @@
   inherits: false;
 }
 .monaco-workbench.vs {
-  --sw-border: #e4e4e7;
-  --sw-muted: #71717a;
+  --sw-border: var(--vscode-widget-border);
+  --sw-muted: var(--vscode-descriptionForeground);
+  --wf-row-stroke: var(--vscode-sideBar-border);
+  --wf-tab-stroke: var(--vscode-editorGroup-border);
+  --wf-popup-stroke: var(--vscode-widget-border);
+  --wf-selection-accent: var(--vscode-focusBorder);
   --sw-ease: cubic-bezier(.2,.8,.2,1);
-  background-color: #fff !important;
+  background-color: var(--vscode-editor-background) !important;
   background-image: none !important;
+}
+/* Preserve the original Light-only decorative strokes, not other themes' surfaces. */
+.monaco-workbench.vs[class*="-themes-white-flow-light-json"] {
+  --wf-row-stroke: #dedee4;
+  --wf-tab-stroke: #dddde3;
+  --wf-popup-stroke: #d8d8de;
+  --wf-selection-accent: #2563eb;
 }
 .monaco-workbench.vs .part.editor,
 .monaco-workbench.vs .monaco-editor,
-.monaco-workbench.vs .monaco-editor .monaco-editor-background,
+.monaco-workbench.vs .monaco-editor .monaco-editor-background {
+  background-color: var(--vscode-editor-background) !important;
+  background-image: none !important;
+}
 .monaco-workbench.vs .monaco-editor .margin {
-  background-color: #fff !important;
+  background-color: var(--vscode-editorGutter-background) !important;
   background-image: none !important;
 }
 .monaco-workbench.vs .monaco-editor .view-line span {
@@ -24,16 +38,19 @@
   filter: none;
 }
 .monaco-workbench.vs .part.sidebar,
-.monaco-workbench.vs .part.auxiliarybar,
+.monaco-workbench.vs .part.auxiliarybar {
+  background-color: var(--vscode-sideBar-background) !important;
+  background-image: none !important;
+}
 .monaco-workbench.vs .part.activitybar {
-  background-color: #fafafa !important;
+  background-color: var(--vscode-activityBar-background) !important;
   background-image: none !important;
 }
 .monaco-workbench.vs .part.sidebar .title-label h2,
 .monaco-workbench.vs .part.auxiliarybar .title-label h2 {
   font-size: 11px !important;
   font-weight: 600 !important;
-  color: #71717a !important;
+  color: var(--vscode-sideBarTitle-foreground) !important;
   text-shadow: none !important;
 }
 .monaco-workbench.vs .part.sidebar .monaco-list-row {
@@ -41,7 +58,7 @@
   transition: background-color 140ms ease, box-shadow 140ms ease;
 }
 .monaco-workbench.vs .part.sidebar .monaco-list-row.selected {
-  box-shadow: inset 0 0 0 1px #dedee4, 0 1px 2px #18181b06;
+  box-shadow: inset 0 0 0 1px var(--wf-row-stroke), 0 1px 2px #18181b06;
 }
 .monaco-workbench.vs .part.sidebar .monaco-list-row.selected::before {
   content: '';
@@ -51,7 +68,7 @@
   bottom: 5px;
   width: 2px;
   border-radius: 2px;
-  background: #2563eb;
+  background: var(--wf-selection-accent);
   pointer-events: none;
   animation: sw-selection 180ms var(--sw-ease);
 }
@@ -71,10 +88,10 @@
   transition: background-color 150ms ease, color 150ms ease;
 }
 .monaco-workbench.vs .part.activitybar .action-item.checked .action-label {
-  background-color: #ededf0;
+  background-color: var(--vscode-inputOption-activeBackground);
 }
 .monaco-workbench.vs .part.editor > .content .editor-group-container > .title {
-  background-color: #f8f8f9 !important;
+  background-color: var(--vscode-editorGroupHeader-tabsBackground) !important;
 }
 .monaco-workbench.vs .tabs-container > .tab {
   border: 1px solid transparent !important;
@@ -85,9 +102,9 @@
   transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 .monaco-workbench.vs .tabs-container > .tab.active {
-  border-color: #dddde3 !important;
+  border-color: var(--wf-tab-stroke) !important;
   box-shadow: 0 1px 3px #18181b08;
-  background-color: #fff !important;
+  background-color: var(--vscode-tab-activeBackground) !important;
 }
 .monaco-workbench.vs .tabs-container > .tab .tab-label {
   font-size: 12px;
@@ -97,14 +114,14 @@
   border-radius: 3px;
 }
 .monaco-workbench.vs .part.titlebar .command-center-center {
-  background-color: #fafafa !important;
-  border: 1px solid #e4e4e7 !important;
+  background-color: var(--vscode-commandCenter-background) !important;
+  border: 1px solid var(--vscode-commandCenter-border) !important;
   border-radius: 5px;
   box-shadow: 0 1px 2px #18181b03;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 .monaco-workbench.vs .part.titlebar .command-center-center:hover {
-  border-color: #bcbcc5 !important;
+  border-color: var(--vscode-commandCenter-activeBorder) !important;
   box-shadow: 0 1px 3px #18181b08;
 }
 .monaco-workbench.vs .monaco-inputbox,
@@ -117,10 +134,10 @@
   transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 .monaco-workbench.vs .quick-input-widget {
-  border: 1px solid #d8d8de !important;
+  border: 1px solid var(--wf-popup-stroke) !important;
   border-radius: 8px !important;
   box-shadow: 0 18px 60px #18181b1c, 0 3px 12px #18181b0d !important;
-  background-color: #fff !important;
+  background-color: var(--vscode-quickInput-background) !important;
   animation: sw-popover 180ms var(--sw-ease);
   isolation: isolate;
 }
@@ -147,11 +164,11 @@
   transition: background-color 120ms ease;
 }
 .monaco-workbench.vs .quick-input-widget .monaco-list .monaco-list-rows {
-  background: #fff;
+  background: var(--vscode-quickInput-background);
 }
 .monaco-workbench.vs .monaco-menu .monaco-action-bar.vertical .actions-container {
-  background: #fff !important;
-  border: 1px solid #e4e4e7;
+  background: var(--vscode-menu-background) !important;
+  border: 1px solid var(--vscode-menu-border);
   border-radius: 6px;
   padding: 4px;
   box-shadow: 0 8px 28px #18181b14, 0 2px 6px #18181b08;
@@ -165,9 +182,13 @@
   border-radius: 6px !important;
   box-shadow: 0 6px 24px #18181b12 !important;
 }
-.monaco-workbench.vs .part.statusbar,
+.monaco-workbench.vs .part.statusbar {
+  background-color: var(--vscode-statusBar-background) !important;
+  background-image: none !important;
+  text-shadow: none !important;
+}
 .monaco-workbench.vs .part.panel {
-  background-color: #fff !important;
+  background-color: var(--vscode-panel-background) !important;
   background-image: none !important;
   text-shadow: none !important;
 }

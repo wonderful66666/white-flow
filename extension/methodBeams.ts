@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { matchesTheme, ThemeLabels } from './themeSupport';
 import { beamPairs, onDefinition, Beam } from './beamRules';
 import { eligible, paint } from './featureSupport';
 import { SignalType } from './signalType';
@@ -16,7 +17,7 @@ export class MethodBeams implements vscode.Disposable {
   private painted: vscode.TextEditor | undefined;
   private disposed = false;
 
-  constructor(private readonly themeLabel: string, private readonly hasPatch: () => Promise<boolean>) {}
+  constructor(private readonly themeLabels: ThemeLabels, private readonly hasPatch: () => Promise<boolean>) {}
 
   refresh(): void {
     this.stop();
@@ -71,7 +72,7 @@ export class MethodBeams implements vscode.Disposable {
         : [document.getWordRangeAtPosition(cursor) || new vscode.Range(cursor, cursor)];
       paint(editor, this.types[0], calls); paint(editor, this.types[1], [item.selectionRange]);
       const workbench = vscode.workspace.getConfiguration('workbench');
-      if (patch && workbench.get<string>('colorTheme') === this.themeLabel) {
+      if (patch && matchesTheme(workbench.get<string>('colorTheme'), this.themeLabels)) {
         this.resultRevision = this.resultRevision % 9999999999 + 1;
         this.signal.set(beamsDeclaration(pairs.map(pair => `${pair.from}-${pair.to}`).join(','), this.resultRevision,
           workbench.get<string>('reduceMotion') === 'on' ? 'still' : 'on'));

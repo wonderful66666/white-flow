@@ -145,3 +145,67 @@ test('missing or rejecting language providers are quiet and do not paint', async
   focus.refresh(); beams.refresh(); f.advance(300); await f.settle();
   assert.ok([...f.frames].every(type => f.painted(type).length === 0)); focus.dispose(); beams.dispose();
 });
+
+test('polish has one unapplied aggregate type, with theme and motion gates and no off resources', () => {
+  const f = fixture(), polish = new (f.load('polishEffects').PolishEffects)('White');
+  polish.refresh(); assert.equal(f.frames.size + f.listenerCount() + f.timers.size + f.reads, 0);
+  f.set('workbench.colorTheme', 'White');
+  f.set('whiteFlow.stickyGlass.enabled', true); f.set('whiteFlow.celebrate.enabled', true); f.set('whiteFlow.keycaps.enabled', true);
+  polish.refresh(); assert.equal(f.frames.size, 1);
+  assert.equal([...f.frames][0].options.textDecoration, 'none; --white-flow-polish: celebrate keycaps sticky-glass');
+  assert.equal(f.painted([...f.frames][0]).length, 0);
+  f.set('workbench.reduceMotion', 'on'); polish.refresh();
+  assert.equal([...f.frames][0].options.textDecoration, 'none; --white-flow-polish: keycaps sticky-glass');
+  f.set('workbench.colorTheme', 'Other'); polish.refresh(); assert.equal(f.frames.size, 0);
+  polish.dispose(); polish.refresh(); assert.equal(f.frames.size + f.listenerCount() + f.timers.size + f.reads, 0);
+});
+
+test('TODO Marker is quiet while off, scans visible ranges with bounded overscan, and switches style', () => {
+  const f = fixture(), marker = new (f.load('todoMarker').TodoMarker)();
+  marker.refresh(); assert.equal(f.frames.size + f.listenerCount() + f.timers.size + f.reads, 0);
+  f.editor.document.replace(Array.from({ length: 300 }, (_, i) => [5, 150, 270].includes(i) ? '// TODO: sample' : 'ordinary code').join('\n'));
+  f.editor.viewRanges = [new f.vscode.Range(150, 0, 150, 0)]; f.set('whiteFlow.todoMarker.enabled', true);
+  marker.refresh(); assert.equal(f.frames.size, 3); f.advance(199); assert.equal(f.reads, 0); f.advance(1);
+  assert.equal(f.reads, 101);
+  const type = [...f.frames][0]; assert.match(type.options.textDecoration, /background-image: url\("data:/);
+  assert.equal(type.options.backgroundColor, undefined); assert.deepEqual(f.painted(type).map(range => range.start.line), [150]);
+  f.emit('ranges', {}); f.emit('ranges', {}); assert.equal(f.timers.size, 1);
+  f.set('whiteFlow.todoMarker.style', 'flat'); marker.refresh();
+  assert.equal([...f.frames][0].options.backgroundColor, '#FEF9C3'); assert.equal([...f.frames][0].options.textDecoration, undefined);
+  marker.dispose(); assert.equal(f.frames.size + f.listenerCount() + f.timers.size, 0);
+});
+
+test('main wires polish and TODO settings without installing patch assets', () => {
+  const f = fixture(), metadata = require('../package.json'), context = { extension: { packageJSON: metadata }, subscriptions: [] };
+  f.load('main').activate(context); f.set('workbench.colorTheme', metadata.contributes.themes[0].label);
+  for (const key of ['whiteFlow.stickyGlass.enabled', 'whiteFlow.todoMarker.enabled']) {
+    f.set(key, true); f.emit('config', { affectsConfiguration: section => key === section || key.startsWith(section + '.') });
+  }
+  assert.equal(f.frames.size, 4); assert.equal(f.patchReads, 0);
+  context.subscriptions.forEach(disposable => disposable.dispose());
+  assert.equal(f.frames.size + f.listenerCount() + f.timers.size + f.commands.size, 0);
+});
+
+test('main reads all manifest labels and clears all declaration signals on other themes', async () => {
+  const metadata = require('../package.json'), labels = metadata.contributes.themes.map(theme => theme.label);
+  const f = fixture(), context = { extension: { packageJSON: metadata }, subscriptions: [] };
+  f.setPatch(true); f.load('main').activate(context);
+  assert.equal(f.frames.size + f.timers.size + f.reads + f.patchReads, 0);
+  const configure = key => f.emit('config', { affectsConfiguration: section => key === section || key.startsWith(section + '.') });
+  for (const name of ['keywordFlow', 'lineMist', 'engraved', 'methodBeams']) {
+    const key = `whiteFlow.${name}.enabled`; f.set(key, true); configure(key);
+  }
+  f.providers.set('vscode.prepareCallHierarchy', () => [{ uri: f.editor.document.uri, selectionRange: range(3, 3) }]);
+  for (const label of [...labels, 'Other', 'White Flow Ink Custom', ...labels]) {
+    f.set('workbench.colorTheme', label); configure('workbench.colorTheme');
+    f.advance(250); await f.settle();
+    const declarations = [...f.frames].map(type => type.options.textDecoration || '').filter(value => value.includes('--white-flow-'));
+    assert.equal(declarations.length, labels.includes(label) ? 4 : 0, label);
+    if (labels.includes(label)) assert.ok(declarations.includes('none; --white-flow-polish: engraved'));
+  }
+  f.set('workbench.reduceMotion', 'on'); configure('workbench.reduceMotion');
+  assert.ok([...f.frames].some(type => type.options.textDecoration === 'none; --white-flow-polish: engraved'));
+  assert.equal([...f.frames].some(type => type.options.textDecoration?.includes('--white-flow-keyword-flow:')), false);
+  context.subscriptions.forEach(disposable => disposable.dispose());
+  assert.equal(f.frames.size + f.timers.size + f.listenerCount() + f.commands.size, 0);
+});

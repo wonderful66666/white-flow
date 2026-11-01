@@ -14,11 +14,15 @@ Focus Mode asks VS Code's configured symbol provider for symbol ranges/kinds and
 
 Edit Trail keeps only document keys, rebased line numbers, and timestamps in memory, capped at 2,000 per document, with no persistence. Risk Radar lexes bounded Rust text in memory and retains only offset/range findings and fixed hover messages, never the text. Read/write highlight colors add no listener or processing.
 
+Polish sends only fixed effect tokens, never save events, diagnostic messages, filenames, or source text. Its extension-side sender has no document listeners, timers, or file reads. TODO Marker reads only bounded visible comment candidates plus overscan, transiently in memory, and paints ranges with fixed tag colors/strokes. It retains no source text and adds no language server, network service, or persistence.
+
 ## Patch Runtime
 
 The runtime contains no network client, telemetry endpoint, analytics, storage API, or upload feature. It reads token CSS, activity events, primary-cursor `style.left`, numeric gutter labels, and element bounds/visibility. It does not read code text, settings, credentials, project files, or interpreter configuration. It never modifies editor nodes: mist uses owned head styles and beams uses an owned body-level SVG.
 
 The renderer reads only known allowlisted properties from head styles and optional adopted stylesheets, excluding token sheets and its own styles. Signals are appearance metadata, not source text or arbitrary settings. A slow foreground check also runs while effects are off to detect activation. Diagnostics contain states, palette, token classes, and counters, never document text. No alternate file, storage, network, or custom-event bridge is used.
+
+Save Shine observes the save modifier gesture and active/dirty class changes, retaining a short-lived tab reference and timestamp, not its label or filename. Celebrate reads the first numeric counter from the Problems status item, not code, logs, or compiler output. It keeps only the current numeric count and cooldown time. Feedback is canceled in background/reduced-motion states and all observers, temporary rules, and owned overlays are released on disable/disposal. Runtime diagnostics expose effect tokens and feedback counters only. Native workbench DOM is never changed by these effects.
 
 The color theme itself is static data. Selecting it changes the chosen color theme through VS Code itself; it does not change font settings or development tools.
 

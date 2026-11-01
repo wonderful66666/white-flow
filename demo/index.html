@@ -28,35 +28,42 @@
     .preview-controls label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
     .preview-controls input { width: 16px; height: 16px; margin: 0; accent-color: #2563eb; }
     .preview-controls select { width: 104px; height: 28px; border: 1px solid #d4d4d8; border-radius: 4px; background: #fff; color: #27272a; font: inherit; padding: 0 6px; }
+    .preview-controls #color-theme { width: 150px; }
     .monaco-workbench { min-height: calc(100vh - 44px); display: grid; grid-template-rows: 38px 1fr 26px; }
-    .titlebar { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid #e4e4e7; }
+    .titlebar { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid var(--vscode-titleBar-border); background: var(--vscode-titleBar-activeBackground); }
     .menu { display: flex; gap: 18px; font-size: 12px; color: #52525b; }
     .workspace-name { font-size: 12px; color: #71717a; }
     .body { display: grid; grid-template-columns: 210px minmax(0, 1fr); }
-    .sidebar { padding: 20px 12px; border-right: 1px solid #e4e4e7; }
+    .sidebar { padding: 20px 12px; border-right: 1px solid var(--vscode-sideBar-border); }
     .title-label h2 { margin: 0 0 20px 10px; }
     .folder { margin: 0 0 10px 10px; font-size: 12px; font-weight: 600; }
     .monaco-list-row { min-height: 30px; display: flex; align-items: center; gap: 10px; position: relative; padding: 0 12px; color: #52525b; }
-    .monaco-list-row.selected { background: #f0f0f3; color: #18181b; }
+    .monaco-list-row.selected { background: var(--vscode-list-inactiveSelectionBackground); color: #18181b; }
     .file-kind { width: 18px; color: #2563eb; font: 10px ui-monospace, monospace; }
     .editor { min-width: 0; display: flex; flex-direction: column; }
-    .tabs-container { height: 40px; display: flex; padding-left: 8px; border-bottom: 1px solid #e4e4e7; background: #f8f8f9; }
+    .editor > .content, .editor-group-container, .editor-container { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .editor-group-container > .title { position: relative; }
+    .tabs-container { height: 40px; display: flex; padding-left: 8px; border-bottom: 1px solid var(--vscode-editorGroupHeader-tabsBorder); background: var(--vscode-editorGroupHeader-tabsBackground); }
     .tab { display: flex; align-items: center; gap: 12px; padding: 0 14px; }
     .tab-label { font-size: 12px; }
-    .breadcrumb { color: #71717a; font-size: 11px; padding: 12px 22px 9px; }
-    .monaco-editor { flex: 1; min-width: 0; overflow-x: auto; padding: 6px 0 38px; outline: none; }
-    .view-lines { counter-reset: line; min-width: 590px; font: 16px/29px Consolas, "Courier New", monospace; tab-size: 2; }
+    .breadcrumb { color: #71717a; background: var(--vscode-breadcrumb-background); font-size: 11px; padding: 12px 22px 9px; }
+    .monaco-editor { position: relative; flex: 1; min-width: 0; overflow-x: auto; padding: 6px 0 38px; outline: none; }
+    .margin { position: absolute; top: 0; bottom: 0; left: 0; width: 62px; pointer-events: none; }
+    .view-lines { position: relative; counter-reset: line; min-width: 590px; font: 16px/29px Consolas, "Courier New", monospace; tab-size: 2; }
     .view-line { position: relative; min-height: 29px; padding-left: 74px; white-space: pre; counter-increment: line; }
     .view-line::before { content: counter(line); position: absolute; left: 14px; width: 32px; text-align: right; color: #a1a1aa; font-size: 13px; }
-    .view-line.current { background: #f7f7f9; }
-    .statusbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #e4e4e7; padding: 0 16px; color: #71717a; font-size: 11px; }
+    .view-line.current { background: var(--vscode-editor-lineHighlightBackground); }
+    .statusbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--vscode-statusBar-border); padding: 0 16px; color: #71717a; font-size: 11px; }
+    @media (max-width: 960px) {
+      .preview-label { height: 112px; padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+      .preview-controls { order: 3; width: 100%; margin-left: 0; display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 8px 14px; }
+      .monaco-workbench { min-height: calc(100vh - 112px); }
+    }
     @media (max-width: 700px) {
       .body { grid-template-columns: minmax(0, 1fr); }
       .sidebar, .menu { display: none; }
       .titlebar { justify-content: center; }
-      .preview-label { height: 80px; padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
-      .preview-controls { order: 3; width: 100%; margin-left: 0; }
-      .monaco-workbench { min-height: calc(100vh - 80px); }
+      .margin { width: 48px; }
       .view-line { padding-left: 58px; }
       .view-line::before { left: 4px; }
     }
@@ -67,18 +74,23 @@
   <header class="preview-label">
     <strong>White Flow</strong>
     <div class="preview-controls">
+      <select id="color-theme" aria-label="Color theme">
+        <option value="light">White Flow Light</option>
+        <option value="ink">White Flow Ink</option>
+      </select>
       <label><input id="keyword-flow" type="checkbox">Keyword Flow</label>
       <select id="keyword-palette" aria-label="Keyword Flow palette" disabled>
         <option value="aurora">Aurora</option>
         <option value="spectrum">Spectrum</option>
       </select>
+      <label><input id="engraved" type="checkbox">Engraved</label>
     </div>
     <small>Synthetic preview</small>
   </header>
   <main class="monaco-workbench vs">
     <div class="part titlebar"><div class="menu"><span>File</span><span>Edit</span><span>View</span><span>Run</span><span>Terminal</span></div><span class="workspace-name">sample-project</span></div>
     <div class="body">
-      <aside class="part sidebar">
+      <aside class="part sidebar left">
         <div class="title-label"><h2>EXPLORER</h2></div>
         <div class="folder">sample-project</div>
         <div class="monaco-list-row selected"><span class="file-kind">TS</span><span class="monaco-icon-label">App.tsx</span></div>
@@ -86,9 +98,12 @@
         <div class="monaco-list-row"><span class="file-kind">MD</span><span class="monaco-icon-label">README.md</span></div>
       </aside>
       <section class="part editor">
-        <div class="tabs-container"><div class="tab active"><span class="file-kind">TS</span><span class="tab-label">App.tsx</span></div></div>
+        <div class="content"><div class="editor-group-container active">
+        <div class="title"><div class="tabs-container"><div class="tab active"><span class="file-kind">TS</span><span class="tab-label">App.tsx</span></div></div></div>
+        <div class="editor-container">
         <div class="breadcrumb">sample-project / src / App.tsx</div>
         <div class="monaco-editor" tabindex="0" aria-label="Fictional code preview">
+          <div class="margin"></div>
           <div class="view-overlays"></div>
           <div class="view-lines">
 <div class="view-line"><span class="mtk2">import</span><span class="mtk7"> { </span><span class="mtk4">useState</span><span class="mtk7"> } </span><span class="mtk2">from</span><span class="mtk3"> "react"</span><span class="mtk7">;</span></div>
@@ -109,14 +124,113 @@
 <div class="view-line"><span class="mtk7">}</span></div>
           </div>
         </div>
+        </div></div></div>
       </section>
     </div>
-    <footer class="part statusbar"><span>White Flow Light</span><span>UTF-8 &nbsp; TypeScript React</span></footer>
+    <footer class="part statusbar"><span id="theme-label">White Flow Light</span><span>UTF-8 &nbsp; TypeScript React</span></footer>
   </main>
+  <script id="preview-themes" type="application/json">
+{
+  "light": {
+    "name": "White Flow Light",
+    "colors": {
+      "descriptionForeground": "#71717A",
+      "focusBorder": "#A1A1AA",
+      "widget.border": "#E4E4E7",
+      "editor.background": "#FFFFFF",
+      "editor.lineHighlightBackground": "#F6F7F9",
+      "editorGutter.background": "#FFFFFF",
+      "editorGroup.border": "#E4E4E7",
+      "editorGroupHeader.tabsBackground": "#F8F8F9",
+      "editorGroupHeader.tabsBorder": "#E4E4E7",
+      "tab.activeBackground": "#FFFFFF",
+      "sideBar.background": "#FAFAFA",
+      "sideBar.border": "#E4E4E7",
+      "sideBarTitle.foreground": "#71717A",
+      "activityBar.background": "#FAFAFA",
+      "titleBar.activeBackground": "#FFFFFF",
+      "titleBar.border": "#E4E4E7",
+      "commandCenter.background": "#FAFAFA",
+      "commandCenter.border": "#E4E4E7",
+      "commandCenter.activeBorder": "#BCBCC5",
+      "list.inactiveSelectionBackground": "#EEEEF1",
+      "inputOption.activeBackground": "#EDEDF0",
+      "quickInput.background": "#FFFFFF",
+      "menu.background": "#FFFFFF",
+      "menu.border": "#E4E4E7",
+      "panel.background": "#FFFFFF",
+      "statusBar.background": "#FFFFFF",
+      "statusBar.border": "#E4E4E7",
+      "breadcrumb.background": "#FFFFFF"
+    },
+    "tokens": [
+      "#27272A",
+      "#7C3AED",
+      "#03782E",
+      "#1D4ED8",
+      "#6B7280",
+      "#9A5702",
+      "#52525B",
+      "#037471",
+      "#C22859",
+      "#B91C1C"
+    ]
+  },
+  "ink": {
+    "name": "White Flow Ink",
+    "colors": {
+      "descriptionForeground": "#71717A",
+      "focusBorder": "#A1A1AA",
+      "widget.border": "#E4E4E7",
+      "editor.background": "#FAFAFB",
+      "editor.lineHighlightBackground": "#F1F3F6",
+      "editorGutter.background": "#F5F6F8",
+      "editorGroup.border": "#E3E5EA",
+      "editorGroupHeader.tabsBackground": "#F3F4F6",
+      "editorGroupHeader.tabsBorder": "#E3E5EA",
+      "tab.activeBackground": "#FAFAFB",
+      "sideBar.background": "#F5F6F8",
+      "sideBar.border": "#E3E5EA",
+      "sideBarTitle.foreground": "#71717A",
+      "activityBar.background": "#F5F6F8",
+      "titleBar.activeBackground": "#F5F6F8",
+      "titleBar.border": "#E3E5EA",
+      "commandCenter.background": "#FAFAFA",
+      "commandCenter.border": "#E4E4E7",
+      "commandCenter.activeBorder": "#BCBCC5",
+      "list.inactiveSelectionBackground": "#E8EAEF",
+      "inputOption.activeBackground": "#EDEDF0",
+      "quickInput.background": "#FFFFFF",
+      "menu.background": "#FFFFFF",
+      "menu.border": "#E4E4E7",
+      "panel.background": "#FAFAFB",
+      "statusBar.background": "#F5F6F8",
+      "statusBar.border": "#E3E5EA",
+      "breadcrumb.background": "#FAFAFB"
+    },
+    "tokens": [
+      "#171A21",
+      "#6D20D9",
+      "#046426",
+      "#1847D1",
+      "#5E6574",
+      "#814801",
+      "#3F3F46",
+      "#00605E",
+      "#AC0448",
+      "#AF0811"
+    ]
+  }
+}
+  </script>
   <script>
     // Synthetic CSSOM producer for this preview only; it does not replace the extension API.
     const flowSwitch = document.getElementById('keyword-flow');
     const flowPalette = document.getElementById('keyword-palette');
+    const themePicker = document.getElementById('color-theme');
+    const engravedSwitch = document.getElementById('engraved');
+    const workbench = document.querySelector('.monaco-workbench');
+    const previewThemes = JSON.parse(document.getElementById('preview-themes').textContent);
     const signalStyle = document.createElement('style');
     document.head.append(signalStyle);
     function updateSignal() {
@@ -125,9 +239,22 @@
       if (flowSwitch.checked && ['aurora', 'spectrum'].includes(flowPalette.value)) {
         signalStyle.sheet.insertRule('.demo-keyword-signal { text-decoration: none; --white-flow-keyword-flow: ' + flowPalette.value + '; }');
       }
+      if (engravedSwitch.checked) signalStyle.sheet.insertRule('.demo-polish-signal { text-decoration: none; --white-flow-polish: engraved; }');
+    }
+    function updateTheme() {
+      const theme = previewThemes[themePicker.value];
+      if (!theme) return;
+      workbench.className = 'monaco-workbench vs preview-themes-white-flow-' + themePicker.value + '-json';
+      for (const [key, value] of Object.entries(theme.colors)) workbench.style.setProperty('--vscode-' + key.replaceAll('.', '-'), value);
+      document.querySelector('style.vscode-tokens-styles').textContent = theme.tokens.map((color, index) => '.mtk' + (index + 1) + '{color:' + color + '}').join('\n');
+      document.getElementById('theme-label').textContent = theme.name;
     }
     flowSwitch.addEventListener('change', updateSignal);
     flowPalette.addEventListener('change', updateSignal);
+    engravedSwitch.addEventListener('change', updateSignal);
+    themePicker.addEventListener('change', updateTheme);
+    updateTheme();
+    updateSignal();
   </script>
 </body>
 </html>

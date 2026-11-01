@@ -49,6 +49,9 @@ Uninstalling the extension does not remove an independently installed workbench 
 | Focus / Edit Trail / Risk Radar (0.3.0 source) | Yes, when enabled in the updated build | Same |
 | Line Mist (0.3.0 source) | Native current-line highlight only | Updated renderer and White Flow theme |
 | Method Beams (0.3.0 source) | Gutter fallback with call-hierarchy support | Updated renderer marker and White Flow theme |
+| TODO Marker (0.3.0 source) | Flat supported style or experimental SVG decoration style | Same; no application patch required |
+| Keybinding label colors (0.3.0 source) | Updated selected theme | Same |
+| Seven polish effects (0.3.0 source) | Native UI only | Updated polish channel, matching patch, enabled switches, White Flow theme |
 | Rounded workbench controls and popup polish | No | Requires the workbench CSS |
 
 **Full visual effects require both layers. Installing the VSIX does not install, update, or elevate the optional patch.** Source code for the public patch is in `src/` and `tools/manage.cjs`, available in a source checkout or the source archive. Its portable installer is still fixture-tested only. A working legacy local setup is not proof that this installer will work on your desktop. Read [Compatibility](COMPATIBILITY.md) and try a disposable installation first.
@@ -84,7 +87,9 @@ To build a local VSIX, review the extension manifest. The current `white-flow-lo
 
 An old installed script remains always-on until restored and reapplied, even when the updated extension checkbox is off. The updated script starts off, including when the extension is disabled, uninstalled, on another theme, or unable to send its signal. A detected marker means only that a patch is present, not that an old script supports the new protocol. Keep all old backups private and do not force an installer past its safety checks.
 
-The same restore/reapply requirement applies to Line Mist and Method Beams. The installer retains its three payload filenames and refuses changed active hashes. A generic patch marker does not imply beam support: fallback is decided from its renderer section marker. Read/write colors and API-only features need the updated theme/extension, not an application patch.
+The same restore/reapply requirement applies to Line Mist, Method Beams, workbench polish, Ink's theme-following patch surfaces, and Engraved. The installer retains its three payload filenames and refuses changed active hashes. A generic marker does not imply support for a newer channel or effect. Read/write/keybinding colors, TODO Marker, Ink itself, and API-only features need the updated theme/extension, not an application patch. New hub groups do not change these requirements or install patches automatically.
+
+The 0.3.0 source contributes **White Flow Light** and **White Flow Ink**. Select either manually through **Preferences: Color Theme**; the published v0.2.0 VSIX has no Ink theme. An older patch can override Ink's matte surfaces with white until restored/reapplied. **Engraved** is a separate default-off item in the hub's Workbench patch group (`whiteFlow.engraved.enabled`). It needs the updated renderer and either theme. It is static, remains with Reduce Motion on, and disappears under forced colors. Selecting Ink or enabling a feature does not install a patch or change fonts.
 
 ## Experimental Workbench Patch
 

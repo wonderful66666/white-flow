@@ -59,6 +59,7 @@
     "editorInfo.foreground": "#2563EB",
     "editorHint.foreground": "#A1A1AA",
     "editorGutter.background": "#FFFFFF",
+    "editorStickyScrollGutter.background": "#FFFFFF",
     "editorGutter.addedBackground": "#16A34A",
     "editorGutter.modifiedBackground": "#2563EB",
     "editorGutter.deletedBackground": "#DC2626",
@@ -217,7 +218,11 @@
     "scrollbarSlider.activeBackground": "#A1A1AA99",
     "settings.headerForeground": "#27272A",
     "settings.modifiedItemIndicator": "#2563EB",
-    "textLink.foreground": "#2563EB"
+    "textLink.foreground": "#2563EB",
+    "keybindingLabel.background": "#F4F4F5",
+    "keybindingLabel.foreground": "#3F3F46",
+    "keybindingLabel.border": "#D4D4D8",
+    "keybindingLabel.bottomBorder": "#C4C4CC"
   },
   "tokenColors": [
     {

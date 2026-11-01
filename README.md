@@ -1,30 +1,38 @@
 # White Flow
 
-A white VS Code theme with an optional feature hub, opt-in editor effects, and optional workbench polish. Existing editor font settings are left alone.
+Two white VS Code themes with an optional feature hub, opt-in editor effects, and optional workbench polish. Existing editor font settings are left alone.
 
 **Status: experimental VSIX and source release, not a Marketplace release.** The color theme and the feature hub use the supported extension API. The optional workbench patch uses unsupported internals and is experimental. Read the [compatibility notes](docs/COMPATIBILITY.md) before installing it.
 
 **Download:** [White Flow v0.2.0](https://github.com/wonderful66666/white-flow/releases/tag/v0.2.0), then choose `white-flow-vscode-0.2.0.vsix` under **Assets**. The automatic source archives are not extension installation packages.
 
-**Unreleased 0.3.0 source:** adds the Keyword Flow switch, balanced syntax palette, read/write highlights, Focus Mode, Line Mist, Method Beams, Edit Trail, and Rust Risk Radar. The published v0.2.0 VSIX does not contain these additions. Patch-dependent features require both updated layers; older keyword patches remain always-on until restored and reapplied.
+**Unreleased 0.3.0 source:** adds White Flow Ink, the Keyword Flow switch, balanced syntax palettes, code tools, TODO Marker, and opt-in workbench polish described below. The published v0.2.0 VSIX does not contain these additions. Patch-dependent features require both updated layers; older keyword patches remain always-on until restored and reapplied.
 
 ![Synthetic White Flow preview](demo/preview.png)
 
-The preview uses fictional files and sample code, not a screenshot of a personal workspace. Open `demo/index.html` locally and use its Keyword Flow checkbox to try the animation. It is a visual demonstration with a synthetic signal producer, not a working editor or proof of desktop compatibility.
+The PNG uses fictional files and sample code, not a screenshot of a personal workspace, and has not been regenerated for Ink. Open `demo/index.html` locally to compare both themes and toggle Keyword Flow or Engraved. It is a visual demonstration with a synthetic signal producer, not a working editor or proof of desktop compatibility.
+
+## Two Themes (0.3.0 Source)
+
+**White Flow Light** stays airy and quiet: a pure-white editor with the original syntax colors. **White Flow Ink** uses denser, deeper syntax colors on a cool matte `#FAFAFB` editor; the gutter and file area share `#F5F6F8`, with slightly darker tabs. Popups remain pure white. The syntax roles and scope lists are identical. Functional amber constants remain distinct from the cool neutral surfaces.
+
+Select either theme with **Preferences: Color Theme** after building the updated source. Neither theme changes fonts, language tooling, environments, or user settings automatically. Ink itself needs no workbench patch. An older installed patch can still force backgrounds white; restore it and reapply the updated patch to get theme-following surfaces. The new patch reads native theme variables instead of forcing all light themes white; its other optional styling remains experimental.
+
+Base/current-line syntax contrast is at least 4.5:1. Selection contrast is at least 4.5:1 for code and 4.0:1 for Ink comments. Light deliberately retains its original comment color: on its blue selection it measures about 3.96:1, tested against the existing 3.5:1 exception rather than recolored. Tests also cover alpha-composited read/write, mist, glass, marker, and engraved-shadow treatments on both themes. Arbitrary combined decorations are not guaranteed.
 
 ## Three Layers
 
 | Layer | What it does | Installation |
 | --- | --- | --- |
 | Color theme | White editor, neutral identifiers and structure, purple keywords, blue functions, teal types, green strings, amber constants, and rose metadata | Standard VS Code theme |
-| Feature hub | Opt-in typing, keyword flow, focus, mist, beams, edit-trail, and Rust-risk controls, all off by default | Same extension; enable features from the hub |
+| Feature hub | Default-off controls grouped into Editor and Workbench patch sections | Same extension; enable features from the hub |
 | Optional patch | Workbench polish, keyword flow, line mist, brushed-silver beams, and richer typing motion | Explicit local application-file modification; update with the extension |
 
-While **White Flow Light** is selected, a sparkle button in the editor title bar opens the feature hub. The **White Flow: Open Feature Hub** command works with any theme. With every feature off, the extension only registers that command and a settings listener after startup.
+While **White Flow Light** or **White Flow Ink** is selected, a sparkle button in the editor title bar opens the feature hub. The **White Flow: Open Feature Hub** command works with any theme. With every feature off, the extension only registers that command and a settings listener after startup.
 
 The patch does not install React, Motion, Magic UI, or React Bits into VS Code. It is a small CSS/DOM adaptation inspired by those visual styles, not an official integration.
 
-The 0.3.0 source palette reserves `#7C3AED` for keywords and `self`/`this`; Java type references, Rust lifetimes, macros, and bracket pairs do not share that flow color. Identifiers remain ink, punctuation and namespaces use a quieter gray, and comments use a separate gray. TextMate and semantic-token foregrounds are tested against white, the current-line highlight, and the blue selection; comments have a lower selection threshold. Bracket guides, inlay hints, diagnostics, diff highlights, Git markers, and sticky-scroll highlights have explicit colors without changing other workbench surfaces or fonts.
+The 0.3.0 palettes reserve `#7C3AED` (Light) and `#6D20D9` (Ink) for keywords and `self`/`this`; Java type references, Rust lifetimes, macros, and bracket pairs do not share those flow colors. Identifiers remain ink, punctuation and namespaces use a quieter gray, and comments use a separate gray. TextMate and semantic foregrounds are tested against each editor background, current-line highlight, and blue selection with the comment thresholds described above. Bracket guides, inlay hints, diagnostics, diff highlights, Git markers, and sticky-scroll highlights keep their explicit colors and do not change fonts.
 
 ## Install The Released VSIX
 
@@ -57,6 +65,31 @@ node tools/audit-release.cjs
 See the [Development Guide](docs/DEVELOPMENT.md) for technology choices and the rules every feature follows.
 
 The installer does not read or write user settings, keybindings, interpreter paths, Conda environments, language toolchains, or font preferences. It modifies a workbench HTML entry and adds three owned appearance files beside it. This can trigger VS Code integrity warnings and may break after an update.
+
+## Workbench Polish (0.3.0 Source)
+
+All eight polish switches default off and require a matching updated patch and either White Flow theme. One aggregate declaration carries only sorted, unique known tokens. Workbench Reduce Motion removes Save Shine, Celebrate, and Dock from that signal; static effects remain. The renderer also honors both `.monaco-reduce-motion` and the older `.reduce-motion` class, OS reduced motion, forced colors, and reduced transparency where blur is used. Missing internal elements quietly produce no effect. The existing public preview PNG is not a visual record of every new feature.
+
+| Setting | Effect |
+| --- | --- |
+| `whiteFlow.engraved.enabled` | Static white highlights beside native separators, a gutter edge, and a faint 8 px editor inset shadow; no layout changes, absent in forced colors |
+| `whiteFlow.stickyGlass.enabled` | Frosted Sticky Scroll headers, excluding peek headers; native opaque surfaces under reduced transparency or forced colors |
+| `whiteFlow.keycaps.enabled` | Sculpted shortcut labels with a compensated bottom border, retaining the target version's native outer height |
+| `whiteFlow.backlight.enabled` | Static accent rays behind empty-editor watermarks, never behind an open code editor |
+| `whiteFlow.toastStack.enabled` | Newest-first notification stack, expanded by hover or keyboard focus; individual native toast heights remain unchanged |
+| `whiteFlow.saveShine.enabled` | A 600 ms tab-label sweep after a save keystroke and matching dirty-state removal within 1500 ms; autosave has no sweep |
+| `whiteFlow.celebrate.enabled` | A 26-particle, 900 ms burst after a positive error count becomes zero for 800 ms, with a 30-second cooldown |
+| `whiteFlow.dock.enabled` | Vertical activity-bar icon magnification on hover or keyboard focus, with smaller neighboring icons |
+
+Celebrate is a Problems-counter hint, **not a compiler or build-success detector**. Closing a file, filtering diagnostics, or a language service resetting its counters can also produce zero. Save detection is likewise heuristic: it supports the specified Ctrl/Cmd+S and Ctrl/Cmd+Alt+S gestures, not every remapped command or Save menu action. Neither feature sends events from the extension to the patch or reads build logs, filenames, or code.
+
+The theme provides subtle keybinding-label colors even without the Keycaps patch switch. Other polish has no supported visual fallback beyond the native interface. Blur, transparent layers, and CSS animations can cost GPU work even without a JavaScript animation loop. Glass contrast depends on the content behind it; reduced transparency restores the native opaque surface. See [Compatibility](docs/COMPATIBILITY.md#polish-selectors-and-pinned-references) and [Performance](docs/PERFORMANCE.md).
+
+### TODO Marker (extension only)
+
+`whiteFlow.todoMarker.enabled` highlights whole-word TODO, FIXME, and HACK tags inside visible comment lines, including an adjacent colon. `whiteFlow.todoMarker.style` selects `marker` (default) or `flat`. Flat uses documented foreground/background decorations; marker uses the same experimental declaration technique as typing rise, with a fixed encoded SVG value and no application patch. If that technique or a data-image policy changes, choose flat.
+
+Comment recognition is a line-local quote/comment heuristic for slash, hash, dash, and HTML-comment language families, plus star-prefixed block-comment continuations. It is not a tokenizer: multiline strings, nested language embeddings, unusual raw/long literals, and star-prefixed code can lead to missed or extra marks. Only visible ranges plus 50 lines are scanned after a 200 ms debounce. Per editor, work is capped at 20,000 lines, 1 MiB of examined text, 200,000 characters per line, and 10,000 marks. Only ranges are retained. No padding, margins, letter spacing, font family, or font size is added to code.
 
 ## Motion And Accessibility
 
@@ -103,11 +136,11 @@ The extension learns about an edit slightly after the editor draws it, so the ch
 
 ### Keyword flow (extension switch plus updated patch)
 
-In the 0.3.0 source, choose **Keyword Flow** in the feature hub and confirm with Enter. It is off by default. Set `whiteFlow.keywordFlow.palette` to `aurora` (purple, blue, teal, rose) or `spectrum` (red, green, blue, purple) through settings. The signal exists only with **White Flow Light** selected and Workbench Reduce Motion not set to `on`. The extension never changes the chosen theme or that preference automatically. A detected patch marker alone does not prove that an older installed runtime understands the new switch.
+In the 0.3.0 source, choose **Keyword Flow** in the feature hub and confirm with Enter. It is off by default. Set `whiteFlow.keywordFlow.palette` to `aurora` (purple, blue, teal, rose) or `spectrum` (red, green, blue, purple) through settings. The signal exists only with **White Flow Light** or **White Flow Ink** selected and Workbench Reduce Motion not set to `on`. The extension never changes the chosen theme or that preference automatically. A detected patch marker alone does not prove that an older installed runtime understands the new switch.
 
 The new patch starts off and polls only stylesheet metadata about every 1500 ms while focused and visible; allow that delay plus a short refresh debounce after changing the switch. Turning it off removes the gradient stylesheet and stops color ticks. Disabling or uninstalling the extension also removes its signal; reload if VS Code requests it. The new patch then shows ordinary token colors.
 
-Only the White Flow purple keyword color (`rgb(124, 58, 237)`) matches. Blue function-name classes and the previous broad blue/magenta matches are excluded. This remains color-class matching, not a parser or semantic keyword service; reusing the same purple in custom token overrides can broaden the match.
+Only the reserved White Flow keyword colors (`rgb(124, 58, 237)` for Light and `rgb(109, 32, 217)` for Ink) match. Blue function-name classes and the previous broad blue/magenta matches are excluded. This remains color-class matching, not a parser or semantic keyword service; reusing either purple in custom token overrides can broaden the match.
 
 Both palettes use OKLCH interpolation when supported and a validated ordinary-gradient fallback otherwise. Unsupported gradients never leave transparent text behind. One shared CSS rule updates at six ticks per second, pausing during typing, scrolling, background use, or reduced motion. Selection and forced-color styles restore readable solid colors. See [Performance](docs/PERFORMANCE.md).
 

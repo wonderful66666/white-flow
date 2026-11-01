@@ -224,7 +224,7 @@ test('runtime parses and contains no network or code-text reads', () => {
   assert.match(source, /1000 \/ 6/);
   assert.match(source, /prefers-reduced-motion/);
   assert.match(source, /forced-colors/);
-  assert.deepEqual(source.match(/rgb\(\d+, \d+, \d+\)/g), ['rgb(124, 58, 237)']);
+  assert.deepEqual(source.match(/rgb\(\d+, \d+, \d+\)/g), ['rgb(124, 58, 237)', 'rgb(109, 32, 217)']);
   assert.match(source, /--white-flow-keyword-flow/);
   assert.match(source, /CSS\.supports\('background-image', value\)/);
   assert.match(source, /replace\(' in oklch', ''\)/);
@@ -240,6 +240,26 @@ test('mist band stops plus cursor glow and beam backgrounds preserve syntax cont
   backgrounds.push('#F4F4F5', '#FFFFFF');
   for (const background of backgrounds) for (const { name, color } of syntaxForegrounds(theme)) {
     assert.ok(contrastRatio(color, background) >= (color.toUpperCase() === '#6B7280' ? 4 : 4.5), name);
+  }
+});
+
+test('keycap colors and both TODO styles have readable contrast', () => {
+  const theme = readTheme();
+  const keycaps = { 'keybindingLabel.background': '#F4F4F5', 'keybindingLabel.foreground': '#3F3F46',
+    'keybindingLabel.border': '#D4D4D8', 'keybindingLabel.bottomBorder': '#C4C4CC' };
+  for (const [key, value] of Object.entries(keycaps)) assert.equal(theme.colors[key], value, key);
+  assert.ok(contrastRatio(keycaps['keybindingLabel.foreground'], keycaps['keybindingLabel.background']) >= 4.5);
+  const { TODO_COLORS } = require('../out/todoRules');
+  for (const colors of Object.values(TODO_COLORS)) {
+    assert.ok(contrastRatio(colors.foreground, colors.flat) >= 4.5);
+    for (const background of ['editor.background', 'editor.lineHighlightBackground']) {
+      const fill = channels(colors.marker).map((channel, i) => channel * .62 + channels(theme.colors[background])[i] * .38);
+      assert.ok(contrastRatio(colors.foreground, fill) >= 4.5);
+    }
+  }
+  for (const background of ['editor.background', 'editor.lineHighlightBackground']) {
+    const glass = [255, 255, 255].map((channel, i) => channel * .66 + channels(theme.colors[background])[i] * .34);
+    for (const { name, color } of syntaxForegrounds(theme)) assert.ok(contrastRatio(color, glass) >= (color.toUpperCase() === '#6B7280' ? 4 : 4.5), name);
   }
 });
 
@@ -263,7 +283,7 @@ test('every feature is off by default and the hub button only appears with the t
   assert.equal(contributes.configuration.properties['whiteFlow.keywordFlow.palette'].default, 'aurora');
   const [button] = contributes.menus['editor/title'];
   assert.equal(button.command, 'whiteFlow.openFeatures');
-  assert.equal(button.when, `config.workbench.colorTheme == '${contributes.themes[0].label}'`);
+  assert.equal(button.when, 'config.workbench.colorTheme =~ /^White Flow (Light|Ink)$/');
 });
 
 test('typing keyframes exist only when motion is allowed', () => {
